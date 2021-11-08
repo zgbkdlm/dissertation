@@ -1,0 +1,4 @@
+Unless otherwise stated, all rights belong to the author Zheng Zhao. This repository contains files covered by different licenses, please check their licenses before you use them.
+
+You are free to download, display, and print ./dissertation.pdf for your own personal use. Commercial use of it is prohibited.
+
