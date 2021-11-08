@@ -1,7 +1,9 @@
 # Doctoral dissertation of Zheng Zhao
 <img src="./cover/full_cover.png" alt="thesis" width="300"/>
 
-This is thesis is mainly concerned with state-space methods for a class of deep Gaussian process (DGP) regression problems. As an example, one can think of a family of DGPs as solutions to stochastic differential equations (SDEs), and view their regression problems as filtering and smoothing problems. Additionally, this thesis also presents a few applications from (D)GPs, such as system identification of SDEs and spectro-temporal signal analysis.
+[![Dissertation latex compile](https://github.com/zgbkdlm/dissertation/actions/workflows/latex_compile.yml/badge.svg)](https://github.com/zgbkdlm/dissertation/actions/workflows/latex_compile.yml)
+
+This thesis is mainly concerned with state-space methods for a class of deep Gaussian process (DGP) regression problems. As an example, one can think of a family of DGPs as solutions to stochastic differential equations (SDEs), and view their regression problems as filtering and smoothing problems. Additionally, this thesis also presents a few applications from (D)GPs, such as system identification of SDEs and spectro-temporal signal analysis.
 
 Supervisor: Prof. Simo Särkkä.
 
