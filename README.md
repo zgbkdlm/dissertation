@@ -19,7 +19,7 @@ More details regarding the thesis itself can be found in its title pages.
 
 The dissertation is in `./dissertation.pdf`. Feel free to download and read~~
 
-**Note that you may also find an "official" version in [aaltodoc](http://urn.fi/URN:ISBN:978-952-64-0603-9) published by Aalto University. However, it destroyed the PDF links and outline, which makes it very painful to read in computer/ipad/inktablet. I believe you will feel more enjoyable reading `./dissertation.pdf` instead. In terms of content, the one here has no difference with the one in aaltodoc.**
+**Note that you may also find an "official" version in [aaltodoc](http://urn.fi/URN:ISBN:978-952-64-0603-9) published by Aalto University. However, it destroyed the PDF links and outline, making it very painful to read in computer/ipad/inktablet. I believe you will feel more enjoyable reading `./dissertation.pdf` instead. In terms of content, the one here has no difference with the one in aaltodoc.**
 
 1. `./dissertation.pdf`. The PDF of the thesis.
 2. `./errata.md`. Errata of the thesis.
