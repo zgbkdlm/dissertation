@@ -1,0 +1,15 @@
+*.asc
+*.ase
+*.asp
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+.idea
+

@@ -1,0 +1,4 @@
+The aaltoseries class has been published under the Creative Commons Attribution No-Derivative license (http://creativecommons.org/licenses/by-nd/1.0/). This means that you CAN use the class freely in your own documents BUT it also means that you CANNOT base your own Aalto University publication series class/package upon this class. However, you CAN use this class as an example in designing your own classes/packages that implement the publication series recommendations of another university or company.
+
+The documentation for the aaltoseries class has been published under the Creative Commons Attribution license (http://creativecommons.org/licenses/by/1.0/). This means that you CAN freely write your own documentation for the aaltoseries class based on this document as long as you give credit for the original documentation by citing it appropriately.
+

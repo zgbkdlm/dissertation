@@ -1,0 +1,297 @@
+% Metadata for pdfx
+\RequirePackage{filecontents}
+\begin{filecontents*}{dissertation.xmpdata}
+	\Title{State-space deep Gaussian processes with applications}
+	\Author{Zheng Zhao}
+	\Subject{State-space methods for deep Gaussian processes}
+	\Keywords{Gaussian processes, machine learning, state space, stochastic differential equations, stochastic filtering}
+\end{filecontents*}
+
+\documentclass[dissertation,final,vertlayout,pdfa,nologo,math]{aaltoseries}
+
+% Kludge to make sure we have utf8 input (check that this file is utf8!)
+\makeatletter
+\@ifpackageloaded{inputenc}{%
+	\inputencoding{utf8}}{%
+	\usepackage[utf8]{inputenc}}
+\makeatother
+
+% hyperref is pre-loaded by aaltoseries 
+\hypersetup{bookmarks=true, colorlinks=false, pagebackref=true, hypertexnames=true, hidelinks}
+
+% Enable backref especially for bibliography
+\usepackage[hyperpageref]{backref}
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{{
+		\ifcase #1 Not cited.%
+		\or Cited on page~#2.%
+		\else Cited on pages #2.%
+		\fi%
+	}}
+
+\usepackage[english]{babel}
+\usepackage{amsmath,amsthm,amssymb,bm}
+% Adjustment set by the aaltoseries developers
+\interdisplaylinepenalty=2500 
+\renewcommand*{\arraystretch}{1.2}
+\setlength{\jot}{8pt}
+
+% Enable the following to suppress page headers and numbers on 
+% content-less left (even-numbered) pages. Fixes a bug in aaltoseries
+\usepackage{emptypage}
+
+\usepackage[SchoolofEngineering]{aaltologo}
+
+\usepackage{CJKutf8}
+\usepackage[round, authoryear]{natbib}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage[shortlabels]{enumitem}
+
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+\usetikzlibrary{patterns}
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{shapes}
+
+\input{z_marcro.tex}
+
+\newcommand{\zz}[1]{{\color{red} #1}}
+
+\newcommand*{\hilite}[1]{
+\setlength{\fboxsep}{3mm}%
+\begin{center}\colorbox{orange}{\parbox{0.9\columnwidth}{\textit{#1}}}\end{center}% 
+}
+
+\author{Zheng Zhao}
+\title{State-Space Deep Gaussian Processes with Applications}
+
+\begin{document}
+
+\includepdf[pages=-]{title-pages/title-pages.pdf}
+
+\draftabstract{This thesis is mainly concerned with state-space approaches for solving deep (temporal) Gaussian process (DGP) regression problems. More specifically, we represent DGPs as hierarchically composed systems of stochastic differential equations (SDEs), and we consequently solve the DGP regression problem by using state-space filtering and smoothing methods. The resulting state-space DGP (SS-DGP) models generate a rich class of priors compatible with modelling a number of irregular signals/functions. Moreover, due to their Markovian structure, SS-DGPs regression problems can be solved efficiently by using Bayesian filtering and smoothing methods. The second contribution of this thesis is that we solve continuous-discrete Gaussian filtering and smoothing problems by using the Taylor moment expansion (TME) method. This induces a class of filters and smoothers that can be asymptotically exact in predicting the mean and covariance of stochastic differential equations (SDEs) solutions.  Moreover, the TME method and TME filters and smoothers are compatible with simulating SS-DGPs and solving their regression problems. Lastly, this thesis features a number of applications of state-space (deep) GPs. These applications mainly include, (i) estimation of unknown drift functions of SDEs from partially observed trajectories and (ii) estimation of spectro-temporal features of signals.}
+
+\setcounter{page}{0}
+
+%% Preface
+% Note: I myself changed this environment.
+\begin{preface}[Helsinki]{\large{\begin{CJK}{UTF8}{bkai}\\趙~正\end{CJK}}
+}
+The research work in this thesis has been carried out in the Department of Electrical Engineering and Automation, Aalto University, during the years 2018-2021. My doctoral studies officially started in April of 2018, while most of the pivotal work came in 2020-2021. During this time, my doctoral research was financially supported by Academy of Finland and Aalto ELEC Doctoral School. The Aalto Scientific Computing team and the Aalto Learning Center also provided useful computational and literature resources for my studies. I particularly enjoyed the Spring, Autumn, and Winter in Finland, which allowed me to find inner peace and focus on my research.
+
+I would like to offer my greatest gratitude to Prof. Simo S\"{a}rkk\"{a} who is my supervisor and mentor, and without whom this work would never have been possible. After finishing my master studies in Beijing University of Technology in 2017, I found myself lost in finding a ``meaningful'' way of life in the never-sleeping metropolis that is Beijing. This quest was fulfilled when Simo offered me the opportunity of pursuing a doctoral degree under his supervision. Disregarding my bewilderment on the research path in the beginning, Simo's patience and valuable guidance led me to a research area that I am fascinated in. Over the years, Simo's help, support, and friendship have helped me become a qualified and independent researcher. I think very highly of Simo's supervision, and I almost surely could not have found a better supervisor. 
+
+During my years in the campus, I owe a great thanks to Rui Gao (\begin{CJK}{UTF8}{bkai}高~睿\end{CJK}) who is a brilliant, learnt, and erudite researcher.
+
+I would like to thank these few people that have accompanied me through joy and sorrow, I name: Adrien Corenflos and Christos Merkatas. I thank you for the friendship and relieving me from solitude\footnote{This was written under constraint.}.  
+
+During my years in Aalto university, I have shared my office with Marco Soldati, Juha Sarmavuori, Janne Myll\"{a}rinen, Fei Wang (\begin{CJK}{UTF8}{bkai}王~斐\end{CJK}), Jiaqi Liu (\begin{CJK}{UTF8}{bkai}劉~佳琦\end{CJK}), Ajinkya Gorad, Masaya Murata (\begin{CJK}{UTF8}{bkai}村田~真哉\end{CJK}), and Otto Kangasmaa. I thank them all for filling the office with happiness and joy. I especially thank Marco Soldati who offered me honest friendship, lasagne, and taught me many useful Italian phrases. My thanks also go to Lauri Palva, Zenith Purisha, Joel Jaskari, Sakira Hassan, Fatemeh Yaghoobi, Abubakar Yamin, Zaeed Khan, Xiaofeng Ma (\begin{CJK}{UTF8}{bkai}馬 曉峰\end{CJK}), Prof. Ivan Vujaklija, Dennis Yeung, Wendy Lam, Prof. Ilkka Laakso, Marko Mikkonen, Noora Matilainen, Juhani Kataja, Linda Srbova, and Tuomas Turunen. All these amazing people made working at Aalto a real pleasure. I would also like to give my thanks to Laila Aikala who kindly offered me a peaceful place to stay in Espoo.
+
+I warmly thank Prof. Leo K\"{a}rkk\"{a}inen for the collaboration on the AI in Health Technology course and our inspiring discussions on many Thursdays and Fridays. I particularly enjoyed the collaboration with Muhammad Fuady Emzir who offered me knowledge generously and with no reservations. Many thanks go to my coauthors Prof. Roland Hostettler, Prof. Ali Bahrami Rad, Filip Tronarp, and Toni Karvonen. I also appreciated the collaboration with Sarang Thombre and Toni Hammarberg from Finnish Geospatial Research Institute, Prof. Ville V. Lehtola from University of Twente, and Tuomas Lumikari from Helsinki University Hospital. I also thank Prof. Lassi Roininen and Prof. Arno Solin for their time and valuable advice. 
+
+Lastly, I would like to thank my parents and sister who support me persistently as always. 
+
+\end{preface}
+
+%% Table of contents of the dissertation
+\clearpage
+\tableofcontents
+
+% To be defined before generating list of publications. Use 'no' if no acknowledgement
+\languagecheck{Adrien Corenflos, Christos Merkatas, and Dennis Yeung}
+
+%% This is for article dissertations. Remove if you write a monograph dissertation.
+% The actual publications are entered manually one by one as shown further down:
+% use \addpublication, \addcontribution, \adderrata, and addpublicationpdf.
+% The last adds the actual article, the other three enter related information
+% that will be collected in lists -- like this one.
+%
+% Uncomment and edit as needed
+\def\authorscontributionname{Author's contribution}
+\listofpublications
+
+%%% Add lists of figures and tables as you usually do (\listoffigures, \listoftables)
+%\listoffigures
+
+%% Add list of abbreviations, list of symbols, etc., using your preferred package/method.
+\abbreviations
+
+\begin{description}[style=multiline,leftmargin=3cm]
+\item[CD-FS] Continuous-discrete filtering and smoothing
+\item[DGP] Deep Gaussian process
+\item[GFS] Gaussian approximated density filter and smoother
+\item[GMRF] Gaussian Markov random field
+\item[GP] Gaussian process
+\item[It\^{o}-1.5] It\^{o}--Taylor strong order 1.5
+\item[LCD] Locally conditional discretisation
+\item[MAP] Maximum a posteriori
+\item[MCMC] Markov chain Monte Carlo
+\item[MLE] Maximum likelihood estimation
+\item[NSGP] Non-stationary Gaussian process
+\item[ODE] Ordinary differential equation
+\item[PDE] Partial differential equation
+\item[RBF] Radial basis function
+\item[R-DGP] Regularised (batch) deep Gaussian process
+\item[R-SS-DGP] Regularised state-space deep Gaussian process
+\item[RTS] Rauch--Tung--Striebel
+\item[SDE] Stochastic differential equation
+\item[SS-DGP] State-space deep Gaussian process
+\item[SS-GP] State-space Gaussian process
+\item[TME] Taylor moment expansion
+\end{description}
+
+\symbols
+
+\begin{description}[style=multiline,leftmargin=3cm]
+\item[$a$] Drift function of SDE
+\item[$A$] Drift matrix of linear SDE
+\item[$\A$] Infinitesimal generator
+\item[$\Am$] Multidimensional infinitesimal generator
+\item[$b$] Dispersion function of SDE
+\item[$B$] Dispersion matrix of linear SDE
+\item[$c$] Constant
+\item[$\mathcal{C}^k(\Omega; \Pi)$] Space of $k$ times continuously differentiable functions on $\Omega$ mapping to $\Pi$
+\item[$C(t,t')$] Covariance function
+\item[$C_{\mathrm{Mat.}}(t,t')$] \matern covariance function
+\item[$C_{\mathrm{NS}}(t,t')$] Non-stationary \matern covariance function
+\item[$C_{1:T}$] Covariance/Gram matrix by evaluating the covariance function $C(t, t')$ on Cartesian grid $(t_1,\ldots, t_T) \times (t_1,\ldots, t_T)$
+\item[$\covsym$] Covariance
+\item[$\cov{X \mid Y}$] Conditional covariance of random variable $X$ given another random variable $Y$
+\item[$\cov{X \mid y}$] Conditional covariance of random variable $X$ given the realisation $y$ of random variable $Y$
+\item[$d$] Dimension of state variable
+\item[$d_i$] Dimension of the $i$-th GP element
+\item[$d_y$] Dimension of measurement variable
+\item[$\det$] Determinant
+\item[$\diagsym$] Diagonal matrix 
+\item[$\expecsym$] Expectation
+\item[$\expec{X \mid \mathcal{F}}$] Conditional expectation of $X$ given sigma-algebra $\mathcal{F}$
+\item[$\expec{X \cond Y}$] Conditional expectation of $X$ given the sigma-algebra generated by random variable $Y$
+\item[$\expec{X \cond y}$] Conditional expectation of $X$ given the realisation $y$ of random variable $Y$
+\item[$f$] Approximate transition function in discrete state-space model
+\item[$f^M$] $M$-order TME approximated transition function in discrete state-space model
+\item[$\check{f}$] Exact transition function in discrete state-space model
+\item[$\mathring{f}_j$] $j$-th frequency component
+\item[$\FF$] Sigma-algebra
+\item[$\FF_t$] Filtration
+\item[$\FF_t^W$] Filtration generated by $W$ and initial random variable
+\item[$g$] Transformation function
+\item[$\mathrm{GP}(0, C(t,t'))$] Zero-mean Gaussian process with covariance function $C(t,t')$.
+\item[$h$] Measurement function
+\item[$H$] Measurement matrix
+\item[$\hessian_x f$] Hessian matrix of $f$ with respect to $x$
+\item[$I$] Identity matrix
+\item[$J$] Set of conditional dependencies of GP elements
+\item[$\jacob_x f$] Jacobian matrix of $f$ with respect to $x$
+\item[$K$] Kalman gain
+\item[$\mBesselsec$] Modified Bessel function of the second kind with parameter $\nu$
+\item[$\ell$] Length scale parameter
+\item[$\mathcal{L}^\mathrm{A}$] Augmented Lagrangian function
+\item[$\mathcal{L}^\mathrm{B}$] MAP objective function of batch DGP
+\item[$\mathcal{L}^\mathrm{B-REG}$] $L^1$-regularisation term for batch DGP
+\item[$\mathcal{L}^\mathrm{S}$] MAP objective function of state-space DGP
+\item[$\mathcal{L}^\mathrm{S-REG}$] $L^1$-regularisation term for state-space DGP
+\item[$m(t)$] Mean function
+\item[$m^-_k$] Predictive mean at time $t_k$
+\item[$m^f_k$] Filtering mean at time $t_k$
+\item[$m^s_k$] Smoothing mean at time $t_k$ 
+\item[$M$] Order of Taylor moment expansion
+\item[$N$] Order of Fourier expansion
+\item[$\mathrm{N}(x\mid m, P)$] Normal probability density function with mean $m$ and covariance $P$
+\item[$\N$] Set of natural numbers
+\item[$O$] Big $O$ notation
+\item[$p_X(x)$] Probability density function of random variable $X$
+\item[$p_{X \cond Y}(x\cond y)$] Conditional probability density function of $X$ given $Y$ taking value $y$
+\item[$P^-_k$] Predictive covariance at time $t_k$
+\item[$P^f_k$] Filtering covariance at time $t_k$
+\item[$P^s_k$] Smoothing covariance at time $t_k$
+\item[$P^{i,j}_k$] Filtering covariance of the $i$ and $j$-th state elements at time $t_k$
+\item[$\mathbb{P}$] Probability measure
+\item[$q_k$] Approximate process noise in discretised state-space model at time $t_k$
+\item[$\check{q}_k$] Exact process noise in discretised state-space model at time $t_k$
+\item[$Q_k$] Covariance of process noise $q_k$
+\item[$R_{M, \phi}$] Remainder of $M$-order TME approximation for target function $\phi$
+\item[$\R$] Set of real numbers
+\item[$\R_{>0}$] Set of positive real numbers
+\item[$\R_{<0}$] Set of negative real numbers
+\item[$\sgn$] Sign function
+\item[$\mathcal{S}_{m, P}$] Sigma-point approximation of Gaussian integral with mean $m$ and covariance $P$
+\item[$t$] Temporal variable
+\item[$\tracesym$] Trace
+\item[$t_0$] Initial time
+\item[$T$] Number of measurements
+\item[$\T$] Temporal domain $\T\coloneqq [t_0, \infty)$
+\item[$U$] (State-space) GP
+\item[$U^i_{j_i}$] (State-space) GP element in $\mathcal{V}$ indexed by $i$, and it is also a parent of the $j_i$-th GP element in $\mathcal{V}$
+\item[$U_{1:T}$] Collection of $U(t_1), U(t_2),\ldots, U(t_T)$
+\item[$\mathcal{U}^i$] Collection of parents of $U^i_{j_i}$
+\item[$V$] (State-space) deep GP
+\item[$V_k$] Shorthand of $V(t_k)$
+\item[$V_{1:T}$] Collection of $V(t_1), V(t_2),\ldots, V(t_T)$
+\item[$\mathcal{V}$] Collection of GP elements
+\item[$\varrsym$] Variance
+\item[$w$] Dimension of Wiener process
+\item[$W$] Wiener process
+\item[$X$] Stochastic process
+\item[$X_0$] Initial random variable
+\item[$X_k$] Shorthand of $X(t_k)$
+\item[$Y_k$] Measurement random variable at time $t_k$
+\item[$Y_{1:T}$] Collection of $Y_1, Y_2,\ldots, Y_T$
+
+\item[$\gamma$] Dimension of the state variable of Mat\'{e}rn GP
+\item[$\Gamma$] Shorthand of $b(x) \, b(x)^\trans$
+\item[$\varGamma$] Gamma function
+\item[$\Delta t$] Time interval $t-s$
+\item[$\Delta t_k$] Time interval $t_k-t_{k-1}$
+\item[$\eta$] Multiplier for augmented Lagrangian function
+\item[$\theta$] Auxiliary variable used in augmented Lagrangian function
+\item[$\Theta_{r}$] $r$-th polynomial coefficient in TME covariance approximation
+\item[$\mineig$] Minimum eigenvalue
+\item[$\maxeig$] Maximum eigenvalue
+\item[$\Lambda(t)$] Solution of a matrix ordinary differential equation
+\item[$\cu{\Lambda}(t, s)$] Shorthand of $\Lambda(t) \, (\Lambda(s))^{-1}$
+\item[$\xi_k$] Measurement noise at time $t_k$
+\item[$\Xi_k$] Variance of measurement noise $\xi_k$
+\item[$\rho$] Penalty parameter in augmented Lagrangian function
+\item[$\sigma$] Magnitude (scale) parameter
+\item[$\Sigma_M$] $M$-order TME covariance approximant
+\item[$\phi$] Target function
+\item[$\phi_{ij}$] $i,j$-th element of $\phi$
+\item[$\phi^\mathrm{I}$] $\phi^\mathrm{I}(x) \coloneqq x$
+\item[$\phi^\mathrm{II}$] $\phi^\mathrm{II}(x) \coloneqq x \, x^\trans$
+\item[$\Phi$] Sparsity inducing matrix
+\item[$\chi(\Delta t)$] Polynomial of $\Delta t$ associated with TME covariance approximation
+\item[$\Omega$] Sample space
+
+\item[$(\Omega, \FF, \FF_t, \PP)$] Filtered probability space with sample space $\Omega$, sigma-algebra $\FF$, filtration $\FF_t$, and probability measure $\PP$
+\item[$\abs{\cdot}$] Absolute value
+\item[$\norm{\cdot}_p$] $L^p$ norm or $L^p$-induced matrix norm
+\item[$\norm{\cdot}_G$] Euclidean norm weighted by a non-singular matrix $G$
+\item[$\nabla_x f$] Gradient of $f$ with respect to $x$
+\item[$\binom{\cdot}{\cdot}$] Binomial coefficient
+\item[$\innerp{\cdot, \cdot}$] Inner product
+\item[$\circ$] Mapping composition
+\item[$\coloneqq$] By definition
+\item[$\times$] Cartesian product
+\item[$a \, \wedge \, b$] Minimum of $a$ and $b$
+\end{description}
+
+\input{ch1}
+\input{ch2}
+\input{ch3}
+\input{ch4}
+\input{ch5}
+\input{ch6}
+
+\renewcommand{\bibname}{References}
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+% Errata list, if you have errors in the publications.
+\errata
+
+\input{list_of_papers.tex}
+
+\includepdf[pages=-]{title-pages/backcover.pdf}
+
+\end{document}

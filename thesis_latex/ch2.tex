@@ -1,0 +1,499 @@
+%!TEX root = dissertation.tex
+\chapter{Preliminaries}
+\label{chap:cd-smoothing}
+The main scope of this thesis is to reduce deep Gaussian process (DGP) regression problems into continuous-discrete filtering and smoothing problems by representing DGPs as stochastic differential equations. In this chapter we focus on introducing the technical materials that will be necessary in constructing and solving such representations. Section~\ref{sec:sde} is concerned with introducing stochastic differential equations and their properties. Section~\ref{sec:cd-smoothing} focuses on continuous-discrete filtering and smoothing problems as well as algorithms to solve them. Additionally, for the sake of completeness, we list several intermediate results that will be used in the course of this thesis in Section~\ref{sec:useful-theorem}.
+
+\section{Stochastic differential equations (SDEs)}
+\label{sec:sde}
+Solutions to stochastic differential equations (SDEs) are a large class of continuous-time Markov processes that are commonly used to model physical, biological, or financial dynamic systems~\citep{Kloeden1992, Braumann2019}. In this section, we introduce SDEs via their stochastic integral equation interpretations, and we thereupon present a few important concepts and results, including, the notion of existence and uniqueness of their solutions, their Markovian nature, and It\^{o}'s formula. For more comprehensive reviews of SDEs, we refer the reader to, for example, \citet{Chung1990, Karatzas1991, Ikeda1992, Oksendal2003}.
+
+\subsection{Stochastic integral equations}
+One may think of SDEs as ordinary differential/integral equations with additional stochastic driving terms. Wiener processes, which are also known as Brownian motions, are the \textit{de facto} choice for modelling these driving terms as they allow to represent a rich class of stochastic processes with varying characteristics. 
+
+\begin{definition}[Wiener process]
+	\label{def:wiener-process}
+	A stochastic process $W \colon \T\times \Omega \to \R$ on some probability space $(\Omega, \FF, \PP)$ is called an $\R$-valued Wiener process on $\T\coloneqq [t_0, \infty)$, if
+	\begin{itemize}
+		\item $W(t_0) = 0$ almost surely,
+		\item $t \mapsto W(t)$ is continuous almost surely,
+		\item for every integer $k\geq 1$ and real numbers $t_1 \leq t_2 \leq \cdots \leq t_k\in\T$, the increments $W(t_k) - W(t_{k-1}), \ldots, W(t_2) - W(t_1)$ are mutually independent,
+		\item and, for every $t>s\in\T$, the increment $W(t) - W(s) \sim \mathrm{N}(0, t-s)$ is Gaussian distributed of mean zero and covariance $t-s$,
+	\end{itemize}
+	where $W(t)$ is a shorthand for the random variable $\omega \mapsto W(t, \omega)$.
+\end{definition}
+
+There are several ways to construct Wiener processes. The first rigorous construction of Wiener processes is due to Nobert Wiener~\citep{Wiener1923} who construct the Wiener process by considering the space of real-valued continuous functions on an interval (i.e., $\mathcal{C}([0,1];\R)$), and equipping it with a canonical measure (called Wiener measure) that corresponds to the law of the Wiener process~\citep{ReneBrownianBook2012, Kuo1975Book, Kuo2006Book}. The space of continuous functions equipped with the Wiener measure is called the classical/canonical Wiener space.
+
+Nobert Wiener and Raymond Paley also show that one can construct the Wiener process by representing it with a trigonometric orthonormal basis on $[0, 1]$, and independent identically distributed Gaussian random variables~\citep[][Chapter IX]{Paley1934}. This approach was further generalised by Paul L\'{e}vy and Zbigniew Ciesielski for any orthonormal basis of the Hilbert space of square integrable functions $L^2([0, 1])$. This is known as the L\'{e}vy--Ciesielski's construction~\citep{Karatzas1991}. For more comprehensive reviews on the existence/construction of Wiener processes, see, for example,~\citet[][Chapter 3]{ReneBrownianBook2012} or~\citet{Morters2010book}.
+
+Definition~\ref{def:wiener-process} defines scalar-valued Wiener processes. In order to generalise Wiener processes to $\R^w$, it is common to think of $\R^w$-valued Wiener processes as vectors that are a collection of $w$ mutually independent Wiener processes~\citep[][Definition 18.5]{Koralov2007}. As for function-valued Wiener processes, such as $Q$-Wiener processes\footnote{The cover of the thesis illustrates a realisation of a $Q$-Wiener process taking value in a Sobolev space with homogenous Dirichlet boundary condition.}, the generalisation often leverages infinite-dimensional Gaussian measures~\citep{Kuo1975Book,Bogachev1998, Giuseppe2014, Lord_powell_shardlow_2014}.
+
+The key ingredient to defining solutions of SDEs are stochastic integrals of the form
+%
+\begin{equation}
+	\int^t_{t_0} b(s, \omega) \diff W(s, \omega),
+	\label{equ:ito-integral}
+\end{equation}
+%
+where $b$ is any suitable adapted process in the sense that $\omega \mapsto b(t, \omega)$ is measurable with respect to a filtration to which the Wiener process is adapted~\citep[][Chapter 4]{Kuo2006Book}. However, due to the fact that $t \mapsto W(t)$ has infinite first order variation almost surely~\citep[][Chapter 3]{Oksendal2003}, one cannot define the integral above in the classical Stieltjes sense. There exist multiple interpretations of such stochastic integral, and the two most popular constructions are due to \citet{Ito1944} and \citet{Stratonovich1966}. In It\^{o}'s construction, this leads to an integral being a (local) martingale with respect to the filtration that $W$ is adapted to~\citep{Kuo2006Book}. In particular, when the integrand $b$ does not depend on $\omega$ (i.e., is non-random), the integral~\eqref{equ:ito-integral} reduces to a Gaussian process~\citep{Kuo2006Book}.
+%
+\begin{remark}
+	This thesis is only concerned with It\^{o}'s construction of stochastic integrals.
+\end{remark}
+%
+The multidimensional extension of It\^{o} integrals is defined as follows. Suppose that $W$ is a $w$-dimensional Wiener process, and $b$ is an $\R^{d\times w}$-valued process, then the $i$-th element of a $d$-dimensional It\^{o} integral is defined as
+%
+\begin{equation}
+	\sum^w_{j=1} \int^t_{t_0} b_{ij}(s,\omega) \diff W_{j}(s,\omega),
+\end{equation}
+%
+where $ij$ and $j$ above stand for the usual element selection notations \citep[][Page 283]{Karatzas1991}.
+
+With It\^{o} integrals defined, we can then formally interpret SDEs. Consider a $w$-dimensional Wiener process $W$ and a stochastic process $X\colon \T\to\R^d$ that satisfies the stochastic integral equation (SIE)
+%
+\begin{equation}
+	\begin{split}
+		X(t) &= X(t_0) + \int^t_{t_0} a(X(s),s) \diff s + \int^t_{t_0} b(X(s), s) \diff W(s),\\
+		X(t_0) &= X_0,
+	\end{split}
+	\label{equ:SIE}
+\end{equation}
+%
+on some probability space. The differential shorthand 
+%
+\begin{equation}
+	\begin{split}
+		\diff X(t) &= a(X(t), t) \diff t + b(X(t), t)\diff W(t), \\
+		X(t_0) &= X_0,
+	\end{split}
+	\label{equ:SDE}
+\end{equation}
+%
+of the SIE in Equation~\eqref{equ:SIE} is called a \emph{stochastic differential equation}. The SDE coefficients $a\colon \R^d\times\T\to \R^d$ and $b\colon\R^d\times\T \to \R^{d\times w} $ are called the \textit{drift} and \textit{dispersion} functions, respectively. 
+
+\subsection{Existence and uniqueness of SDEs solutions}
+\label{sec:sde-solution-existence-markov}
+One fundamental question is whether an SDE admits a solution and, if so, what the properties (e.g., uniqueness and continuity) of the solution(s) are. In literature, the solution analysis of SDEs is usually described in the sense of strong or weak solutions. In this thesis we are mostly concerned with strong solutions that we detail in the following definition.
+%
+\begin{definition}[Strong solution]
+	\label{def:strong-solution}
+	Let $(\Omega, \FF, \FF_t, \mathbb{P})$ be a filtered probability space, $W\colon \T \to\R^w$ be a $w$-dimensional Wiener process defined on this space, and let $X_0\in\R^d$ be a random variable independent of $W$. Also let $\FF_t^W$ be the filtration generated by $W(t)$ and $X_0$. Then a continuous process $X\colon\T\to\R^d$ is said to be a strong solution of the SDE~\eqref{equ:SDE} if the following four conditions are satisfied.
+	%
+	\begin{enumerate}[I.]
+		\item $X(t)$ is adapted to $\FF_t^W$.
+		\item $\PP$-almost surely $X(t)$ solves Equation~\eqref{equ:SIE} for all $t\in\T$.
+		\item $\PP$-almost surely $\int^t_{t_0} \abs*{a_{i}(X(s), s)} + (b_{ij}(X(s), s))^2 \diff s < \infty$ holds for all $i=1,2,\ldots, d$, $j=1,2,\ldots, w$, and $t\in\T$.
+		\item $\PP$-almost surely $X(t_0) = X_0$.
+	\end{enumerate}
+	%
+\end{definition}
+%
+The above definition is found in~\citet[][Definition 2.1]{Karatzas1991} or~\citet[][Section 10.4]{Chung1990}, but for simplicity, here we omit to augment $\FF_t^W$ with the null sets of $\Omega$. This definition means that if we are given a probability space which carries $W$ and $X_0$, the solution $X(t)$ must be adapted to the generated filtration $\FF_t^W$. In other words, $W$ and $X_0$ should completely characterise $X$, and one can write the strong solution as a function of $W$ and $X_0$ only. 
+
+The third condition in Definition~\ref{def:strong-solution} is important to keep in mind as it makes the solutions continuous semimartingales~\citep{Chung1990, Williams2000Vol2}.
+
+The notion of strong solution might not always be useful because the condition of being adapted to the generated filtration is sometimes too strict. For example, in Tanaka's equation~\citep[][Example 5.3.2]{Oksendal2003}, one cannot find such an $\FF_t^W$-adapted solution therefore, the equation does not admit a strong solution. To relax this restriction, we can allow flexibility on the Wiener process, and seek pairs $(X, W)$ solutions of the SDE~\eqref{equ:SDE}, instead of simply seeking $X$~\citep{Chung1990, Oksendal2003}. Such pairs are called weak solutions and are closely related to the martingale problem~\citep{Stroock1969, Strock1979, Williams2000Vol2}. Moreover, strong solutions are weak solutions but the converse is not true. However, since this thesis is not concerned with weak solutions, we refer the reader to, for example, \citet[][]{Chung1990} or~\citet[][Definition 3.1]{Karatzas1991} for technical expositions of these. 
+
+\begin{remark}
+	\label{remark:a-solution-of-sde}
+	In the remainder of this thesis, unless mentioned otherwise, we will be solely concerned with strong solutions of SDEs (although some results may hold in the weak sense too). Moreover, strong solutions of SDEs will be referred to as It\^{o} processes.
+\end{remark}
+
+Pathwise and weak uniqueness of SDE solutions are defined as follows (see, \citealp[][Chapter 5.3]{Karatzas1991} or \citealp[][Page 247]{Chung1990}).
+%
+\begin{definition}[Pathwise uniqueness]
+	\label{def:pathwise-unique}
+	The pathwise uniqueness holds for the SDE in Equation~\eqref{equ:SDE} if for all solutions $\overline{X}$ and $\widetilde{X}$ that share the same probability space, Wiener process, and initial condition, we have
+	\begin{equation}
+		\PP\big(\big\lbrace \omega \colon  \absbig{\overline{X}(t) - \widetilde{X}(t)} = 0,~\mathrm{for~all~} t\in\T \big\rbrace\big) = 1.
+		\label{equ:indistinguishable}
+	\end{equation}
+\end{definition}
+%
+Notice that the ``for all $t\in\T$'' condition in Equation~\eqref{equ:indistinguishable} can be moved outside of the probability because $\big\lbrace\omega\colon\absbig{\overline{X}(t) - \widetilde{X}(t)} = 0,~\mathrm{for~all~} t\in\T \big\rbrace$ includes $\big\lbrace\omega\colon\absbig{\overline{X}(t) - \widetilde{X}(t)} = 0\big\rbrace$ for all $t\in\T$, and the converse is true as well due to the continuity of the solutions.
+%
+\begin{definition}[Weak uniqueness]
+	\label{def:weakly-unique}
+	The weak uniqueness holds for the SDE in Equation~\eqref{equ:SDE}, if all solutions are identical in law. 
+\end{definition}
+%
+%The pathwise uniqueness means that all solutions are indistinguishable almost surely, while the weak uniqueness means that all solutions have the same finite-dimensional distributions $(X(t_1), X(t_2), \ldots, X(t_T))$ for all $t_1, t_2, \ldots, t_T \in \T$~\citep{Karatzas1991}. 
+Furthermore, a classical result by~\citet{Yamada1971} shows that the pathwise uniqueness implies the weak uniqueness. 
+
+%The classical conditions for ensuring the solution existence are the Lipschitz and linear growth conditions. expand more. The proof usually uses Picard--Lindel\"{o}f iteration.
+
+\subsection{Markov property of SDE solutions}
+\label{sec:markov-property}
+One of the main purposes of using SDEs is to construct continuous-time Markov processes. Hence, it is necessary to examine if solutions of SDEs admit the Markov property defined as follows. 
+%
+\begin{definition}[Markov process]
+	\label{def:markov-process}
+	Let $\FF_t$ be a given filtation on $\Omega$, and $X(t)$ be an $\FF_t$-adapted process. Then $X$ is said to be a Markov process (with respect to $\FF_t$) if 
+	\begin{equation}
+		\expec{\varphi(X(t + s)) \cond \FF_t} = \expec{\varphi(X(t+s)) \cond X(t)}
+	\end{equation}
+	for every $t\in\T, s\in\R_{\geq 0}$, and bounded Borel measurable function $\varphi$.
+\end{definition}
+%
+%% Note: This definition can be equivalently written into the P(.. | ..) = P(.. | ..) form, just take \varphi = indicator function.
+%
+It can be shown that It\^{o} processes are indeed Markov processes. Proofs can be found, for example, in~\citet[][Theorem 7.1.2]{Oksendal2003}, \citet[][Theorem 10.6.2]{Kuo2006Book},~\citet[][Theorem 18.13]{ReneBrownianBook2012}, \citet[][Theorem 8.6]{LeGall2016}, and~\citet[][Lemma 10.10]{Chung1990}. 
+
+\begin{remark}
+    Thanks to the martingale-problem method~\citep{Stroock1969}, the Markov property for SDEs can be proved in more general context than strong solutions of SDEs, if the associated martingale problem is well-posed. For details, see, for example, \citet[][Theorem 21.1]{Williams2000Vol2, Ethier1986}.
+\end{remark}
+
+The Markov property is useful in the sense that it allows for predicting the future given some past information (i.e., $\FF_t$) by only using the present (i.e., $X(t)$). This feature makes many applications -- such as Bayesian filtering and smoothing~\citep{Sarkka2013} -- computationally efficient. To see this, let $p_{X(t_1),\ldots, X(t_k), X(t_{k+1})}(x_1, \ldots,\allowbreak x_k, x_{k+1})$ be the finite-dimensional probability density function of $\big\lbrace X(t_1), \ldots,\allowbreak  X(t_k), X(t_{k+1})\big\rbrace$ for any integer $k\geq 1$ and $t_1\leq \cdots\leq t_k\leq t_{k+1}\in\T$. The Markov property implies that
+%
+\begin{equation}
+	p_{X(t_{k+1}) \cond X(t_k), \ldots, X(t_1)}(x_{k+1} \cond x_k, \ldots, x_1) = p_{X(t_{k+1}) \cond X(t_k)}(x_{k+1} \cond x_k)
+\end{equation}
+%
+and
+\begin{equation}
+	p_{X(t_k) \cond X(t_i)}(x_k \cond x_i) = \int p_{X(t_k) \cond X(t_j)}(x_k \cond x_j) \, p_{X(t_j) \cond X(t_i)}(x_j \cond x_i) \diff x_j
+	\label{equ:chapman-kol}
+\end{equation}
+%
+hold for every $t_i \leq t_j \leq t_k\in\T$. The conditional density $p_{X(t_{k+1}) \cond X(t_k)}(x_{k+1} \cond x_k)$ and Equation~\eqref{equ:chapman-kol} are known as the transition probability density function and the Chapman--Kolmogorov equation, respectively. In particular, the Chapman--Kolmogorov equation means that the joint probability density function of a Markov process at times $t_1,\ldots,t_k$ factorises with respect to its transition densities. Therefore, one can compute Markov processes marginal distributions sequentially with linear complexity in time. This is particularly useful in the context of Bayesian filtering and smoothing which will be the subject of Section~\ref{sec:cd-smoothing}. 
+
+\subsection{It\^{o}'s formula}
+\label{sec:ito-formula}
+Suppose that $X\colon\T\to\R$ is a deterministic smooth function, and that $\phi\in\mathcal{C}^1(\R;\R)$ is another smooth function. Then by Newton--Leibniz formula/chain rule, we have
+\begin{equation}
+	\phi(X(t)) = \phi(X(t_0)) + \int^t_{t_0}\tash{\phi}{X}\tash{X}{t}(s) \diff s.\nonumber
+\end{equation}
+Unfortunately the rule above does not generally hold when $X$ is a stochastic process. As an example, if $X$ is a Wiener process then the derivative $\partial X \, / \, \partial t$ does not exist in the usual limit definition~\citep[][Chapter 14]{ReneBrownianBook2012}.
+
+The differentiation rule for continuous semimartingales is given by the so-called It\^{o}'s formula~\citep[see, e.g.,][Theorem 5.10]{LeGall2016}. In the special case when $X$ is an It\^{o} process, It\^{o}'s formula takes the following form.
+
+\begin{theorem}[It\^{o}'s formula]
+	\label{thm:ito-formula}
+	Let $\phi\colon \R^d \times \T \to \R$ be a function that is twice-differentiable in the first argument and differentiable in the second argument. Suppose that $X\colon \T\to\R^d$ is an It\^{o} process solving the SDE in Equation~\eqref{equ:SDE}, then
+	\begin{equation}
+		\begin{split}
+			\phi(X(t), t) &= \phi(X(t_0), t_0)  + \int^t_{t_0} \tash{\phi}{t}(X(s), s) \diff s \\
+			&\quad+ \int^t_{t_0}  (\nabla_X \phi)^\trans \, a(X(s), s) + \frac{1}{2} \, \trace*{\Gamma(X(s), s) \, \hessian_X\phi  } \diff s \\
+			&\quad+ \int^t_{t_0} (\nabla_X \phi)^\trans \, b(X(s), s) \diff W(s), 
+		\end{split}
+	\end{equation}
+	where $\Gamma(X(s), s) \coloneqq b(X(s), s) \, b(X(s), s)^\trans$, and $\nabla$ and $\hessian$ denote the gradient and Hessian operators, respectively. Moreover, $t \mapsto \phi(X(t), t)$ is also an It\^{o} process.
+\end{theorem}
+
+\section{Continuous-discrete filtering and smoothing}
+\label{sec:cd-smoothing}
+In this section, we review Bayesian filtering and smoothing algorithms for continuous-discrete state-space models~\citep{Jazwinski1970, Sarkka2013, Sarkka2019}. 
+
+\subsection{Continuous-discrete state-space models}
+\label{sec:cd-ss-model}
+Consider a system 
+\begin{equation}
+	\begin{split}
+		\diff X(t) &= a(X(t), t) \diff t + b(X(t), t) \diff W(t), \quad X(t_0) = X_0, \\
+		Y_k &= h(X_k) + \xi_k, \quad \xi_k \sim \mathrm{N}(0, \Xi_k),
+	\end{split}
+	\label{equ:cd-model}
+\end{equation}
+where $X\colon\T\to\R^d$, $X_k \coloneqq X(t_k)$, $Y_k\in\R^{d_y}$, $\Xi_k\in\R^{d_y \times d_y}$, and $h\colon \R^d \to \R^{d_y}$. Models represented by the combination of an SDE and a discrete-time measurement model as per Equation~\eqref{equ:cd-model} are called \textit{continuous-discrete state-space models}, or simply continuous-discrete models. These are ubiquitous in physics and engineering (see, e.g., Example~\ref{example:tme-ct-tracking} for manoeuvring target tracking). We call $X_k$ and $Y_k$ the \textit{state} and \textit{measurement}, respectively, of $X(t_k)$ at $t_k$.
+
+Let $Y_{1:T} = \lbrace Y_k \colon k=1,2,\ldots,T \rbrace$ be a collection of measurement variables and $y_{1:T} = \lbrace y_k \colon k=1,2,\ldots,T\rbrace$ be the corresponding data at times $t_1 \leq t_2 \leq \cdots \leq t_T \in \T$. The continuous-discrete filtering and smoothing problem for model~\eqref{equ:cd-model} aims at solving the filtering posterior marginal densities
+%
+\begin{equation}
+	p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k})
+	\label{equ:cd-filtering}
+\end{equation}
+%
+and the smoothing posterior marginal densities
+%
+\begin{equation}
+	p_{X_k \cond Y_{1:T}}(x_k \cond y_{1:T}),
+	\label{equ:cd_smoothing}
+\end{equation}
+%
+for $k=1,2,\ldots, T$~\citep{Sarkka2019}. Although in principle the filtering and smoothing problems aim at more general posterior densities (i.e., $p_{X(t) \cond Y_{1:T}}(x, t \cond y_{1:T})$ for all $t\in\T$), for the sake of simplicity of exposition, we restrict ourselves to estimating the marginal filtering and smoothing distribution at the data points $\lbrace t_k \colon k=1,2,\ldots, T \rbrace$ only. 
+
+Since solutions of SDEs are Markov processes, we can use the Markov property (see, Section~\ref{sec:markov-property}) to sequentially solve the filtering and smoothing posterior densities for $k=1,2,\ldots,T$~\citep{Sarkka2013}. To see this, suppose that the filtering density $p_{X_{k-1} \cond Y_{1:k-1}}(x_{k-1} \cond y_{1:k-1})$ at $t_{k-1}$ is known\footnote{We define $p_{X_{0} \cond Y_{1:0}}(x_{0} \cond y_{1:0}) \coloneqq p_{X_0}(x_0)$ at $t_0$.}. Then by leveraging Bayes' rule, the filtering density at $t_k$ reads
+%
+\begin{equation}
+	p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k}) = \frac{p_{Y_k \cond X_k}(y_k \cond x_k) \, p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1})}{\int p_{Y_k \cond X_k}(y_k \cond x_k) \, p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1}) \diff x_k},
+	\label{equ:cd-filtering-bayes}
+\end{equation}
+%
+where the predictive density
+%
+\begin{equation}
+	\begin{split}
+		&p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1}) \\
+		&= \int p_{X_k \cond X_{k-1}}(x_k \cond x_{k-1}) \, p_{X_{k-1} \cond Y_{1:k-1}}(x_{k-1} \cond y_{1:k-1}) \diff x_{k-1}
+	\end{split} \label{equ:cd-filtering-predictive}
+\end{equation}
+needs to be computed by propagating $p_{X_{k-1} \cond Y_{1:k-1}}(x_{k-1} \cond y_{1:k-1})$ through the SDE.
+%
+One can then obtain the filtering densities sequentially for $k=1,2,\ldots, T$ starting from a known/given initial condition. 
+
+The smoothing densities are solved backward for $k=T,\ldots, 1$ by using the filtering results. Suppose that the smoothing density $p_{X_{k+1} \cond Y_{1:T}} \allowbreak (x_{k+1} \cond y_{1:T})$ at $t_{k+1}$ is known, then again by Bayes' rule~\citep{Kitagawa1987, Sarkka2013}, the smoothing density at $t_{k}$ is
+%
+\begin{equation}
+	\begin{split}
+		&p_{X_k \cond Y_{1:T}}(x_k \cond y_{1:T}) \\
+		&= p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k})  \int \frac{p_{X_{k+1} \cond X_k}(x_{k+1} \cond x_k) \, p_{X_{k+1} \cond Y_{1:T}}(x_{k+1} \cond y_{1:T})}{p_{X_{k+1} \cond Y_{1:k}}(x_{k+1} \cond y_{1:k})} \diff x_{k+1}.
+		\label{equ:cd-smoothing-bayes}
+	\end{split}
+\end{equation}
+
+Unfortunately, for non-linear state-space models, Equations~\eqref{equ:cd-filtering-bayes}, \eqref{equ:cd-filtering-predictive}, and~\eqref{equ:cd-smoothing-bayes} are rarely solvable in closed-form. In practice, one often needs to use approximation schemes, such as Taylor expansion, numerical integration, or particle approximations~\citep{Sarkka2013}. However, if the SDE and measurement model happen to be linear (and also starting from a Gaussian initial condition), then the filtering and smoothing densities are exactly Gaussian and their means and covariances can be computed in closed-form sequentially. This is known as the (continuous-discrete) Kalman filtering and Rauch--Tung--Striebel smoothing~\citep{Sarkka2019}, the details of which are given in the next section. 
+
+\subsection{Rauch--Tung--Striebel smoothing}
+\label{sec:rts}
+Consider a linear continuous-discrete model
+%
+\begin{equation}
+	\begin{split}
+		\diff X(t) &= A(t) \, X(t) \diff t + B(t) \diff W(t), \quad X(t_0) = X_0, \\
+		y_k &= H_k \, X_k + \xi_k, \quad \xi_k \sim \mathrm{N}(0, \Xi_k),
+		\label{equ:cd-linear}
+	\end{split}
+\end{equation}
+where $X_0 \sim \mathrm{N}(m_0, P_0)$ is a Gaussian random variable of mean $m_0$ and covariance $P_0$. Here the coefficients $A\colon \T \to \R^{d\times d}$, $B\colon \T \to \R^{d\times w}$, and $H_k\in \R^{d_y \times d}$ are deterministic matrix-valued functions and a constant, respectively. In this case, the filtering and smoothing densities in Equations~\eqref{equ:cd-filtering-bayes} and~\eqref{equ:cd-smoothing-bayes} can be solved exactly by using Kalman filters and Rauch--Tung--Striebel (RTS) smoothers as follows~\citep[cf.][]{Sarkka2019}.
+
+\begin{algorithm}[Continuous-discrete Kalman filter and RTS smoother]
+	\label{alg:kfs}
+	Let $p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k}) = \mathrm{N}(x_k\cond m^f_k, P^f_k)$ and $p_{X_k \cond Y_{1:T}}(x_k \cond y_{1:T}) = \mathrm{N}(x_k \cond m^s_k, P^s_k)$ be the Gaussian parametrisations of the filtering and smoothing posterior densities, respectively, at $t_k$. Also let $m_0^f \coloneqq m_0$ and $P_0^f \coloneqq P_0$ at $t_0$. At each step for $k=1,2,\ldots,T$, the Kalman filter first obtains the predictive density $\mathrm{N}(x_k \cond m^-_k, P^-_k)$  by solving the system of ordinary differential equations (ODEs)
+	\begin{equation}
+		\begin{split}
+			\frac{\diff m(t)}{\diff t} &= A(t) \, m(t), \\
+			\frac{\diff P(t)}{\diff t} &= A(t) \, P(t) + P(t) \, A(t)^\trans + B(t) \, B(t)^\trans,
+			\label{equ:linear-sde-moment-ode}
+		\end{split}
+	\end{equation}
+	at $t_k$, starting from the initial values $m^f_{k-1}$ and $P^f_{k-1}$ at time $t_{k-1}$. Then, it updates the predictive density to get the filtering posterior mean $m^f_k$ and covariance $P^f_k$ at time $t_k$ by computing
+	\begin{equation}
+		\begin{split}
+			K_k &= P^-_k \, H_k^\trans \, (H_k \, P^-_k \, H_k^\trans + \Xi_k)^{-1},\\
+			m^f_k &= m^-_k + K_k \, (y_k - H_k \, m^-_k), \\
+			P^f_k &= P^-_k - K_k \, (H_k \, P^-_k \, H_k^\trans + \Xi_k) \, K_k^\trans.
+		\end{split}
+		\label{equ:kfs-update}
+	\end{equation}
+	Let $m^s_T \coloneqq m^f_T$ and $P^s_T \coloneqq P^f_T$. At each step for $k=T-1, \ldots, 1$, the RTS smoother computes $m^s_k$ and $P^s_k$ at $t_k$ by solving the system of ODEs
+	\begin{equation}
+		\begin{split}
+			\frac{\diff m(t)}{\diff t} 
+			    &= A(t) \, m(t) + B(t) \, B(t)^\trans \, \big(P^f(t)\big)^{-1} \, \big(m(t) - m^f(t)\big), \\
+			\frac{\diff P(t)}{\diff t} 
+			    &= \Big[A(t) + B(t) \, B(t)^\trans \, \big(P^f(t)\big)^{-1} \Big] \, P(t) \\
+			    &\quad+ P(t) \, \Big[A(t) + B(t) \, B(t)^\trans \, \big(P^f(t)\big)^{-1} \Big]^\trans - B(t) \, B(t)^\trans,
+		\end{split}
+	\end{equation}
+	starting from the initial values $m^s_{k+1}$ and $P^s_{k+1}$ at time $t_{k+1}$, where $m^f(t)$ and $P^f(t)$ stand for the filtering mean and covariance at time $t$, respectively.
+\end{algorithm}
+
+Furthermore, if the SDE coefficients in Equation~\eqref{equ:cd-linear} do not depend on time (i.e., $A$ and $B$ are constant matrices), then the continuous-discrete filtering and smoothing problem can be reformulated in an equivalent discrete-discrete problem of the form
+%
+\begin{equation}
+	\begin{split}
+		X_k &= F_{k-1} \, X_{k-1} + q_{k-1}, \\
+		Y_k &= H_k \, X_k + \xi_k,
+	\end{split}
+	\label{equ:disc-linear}
+\end{equation}
+%
+where $q_{k-1} \sim \mathrm{N}(0, Q_{k-1})$. The coefficients $F_{k-1} \in \R^{d \times d}$ and $Q_{k-1} \in \R^{d \times d}$ are in turn determined by
+%
+\begin{equation}
+	\begin{split}
+		F_{k-1} &= e^{(t_k - t_{k-1}) \, A}, \\
+		Q_{k-1} &= \int^{t_k}_{t_{k-1}} e^{(t_{k} - s) \, A} \,B \, B^\trans \, \big(e^{(t_{k} - s) \, A}\big)^\trans \diff s.
+	\end{split}
+	\label{equ:disc-coeff-exp}
+\end{equation}
+%
+Provided one can numerically compute Equations~\eqref{equ:disc-coeff-exp}~\citep[see, e.g.,][for how to do so in practice]{Axelsson2015, Sarkka2019}, one can then apply standard Kalman filters and RTS smoothers~\citep[][Theorems 4.2 and 8.2]{Sarkka2013} to the discretised state-space model.
+
+\subsection{Gaussian approximate smoothing}
+\label{sec:gaussian-filter-smoother}
+In this section, we review the Gaussian approximated density filtering and smoothing for non-linear continuous-discrete state-space models~\citep{Kazufumi2000, SimoGFS2013}. The idea of Gaussian filtering and smoothing is to approximate the filtering and smoothing densities by
+%
+\begin{equation}
+	\begin{split}
+		p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k}) &\approx \mathrm{N}\big(x_k \cond m^f_k, P^f_k\big), \\
+		p_{X_k \cond Y_{1:T}}(x_k \cond y_{1:T}) &\approx \mathrm{N}\big(x_k \cond m^s_k, P^s_k\big).
+	\end{split}
+	\label{equ:gfs-posteriors}
+\end{equation}
+% 
+Then, by applying Gaussian identities, the general Bayesian filtering and smoothing formulations in Equations~\eqref{equ:cd-filtering-bayes} and~\eqref{equ:cd-smoothing-bayes} admit closed-form approximations. We therefore have the following algorithm~\citep[cf.][Chapter 10]{Sarkka2019}.
+\begin{algorithm}[Continuous-discrete Gaussian filter and smoother]
+	\label{alg:gfs}
+	Let $p_{X_k \cond Y_{1:k}}(x_k \cond y_{1:k}) \approx \mathrm{N}\big(x_k \cond m^f_k, P^f_k\big)$ and $
+	p_{X_k \cond Y_{1:T}}(x_k \cond y_{1:T}) \approx \mathrm{N}\big(x_k \cond m^s_k, P^s_k\big)$ be approximate filtering and smoothing densities. Also consider a Gaussian approximation to the initial density $p_{X_0}(x_0) \approx \mathrm{N}(x_0\cond m_0, P_0)$. The Gaussian filter obtains $\big\lbrace m_k^f, P^f_k\colon k=1,2,\ldots, T \big\rbrace$ by computing the following prediction and update steps sequentially for $k=1,2,\ldots, T$.
+	\begin{enumerate}[I.]
+		\item Prediction:
+		\begin{equation}
+			\begin{split}
+				m^-_k &= \int x_k \, p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1}) \diff x_k, \\
+				P^-_k &= \int (x_k - m_k^-) \, (x_k - m_k^-)^\trans \, p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1}) \diff x_k.
+			\end{split}
+		\end{equation}
+		\item Update:
+		\begin{equation}
+			\begin{split}
+				S_k &= \expecBig{\big(h(X_k) - \expec{h(X_k)}\big) \, \big(h(X_k) - \expec{h(X_k)}\big)^\trans} + \Xi_k,\\
+				K_k &= \expecBig{\big(X_k - m_k^-\big) \, \big(h(X_k) - \expec{h(X_k)} \big)^\trans} \, S_k^{-1}, \\
+				m^f_k &= m^-_k + K_k \, (y_k - \expec{h(X_k)}), \\
+				P^f_k &= P^-_k - K_k \, S_k \, K_k^\trans.
+			\end{split}
+		\end{equation}
+		Note that the expectations above are taken with respect to the predictive density $p_{X_k \cond Y_{1:k-1}}(x_k \cond y_{1:k-1})$. In addition, if the measurement model is linear, then the update step above reduces to Equation~\eqref{equ:kfs-update}.
+	\end{enumerate}
+	Let $m^s_T \coloneqq m^f_T$ and $P^s_T \coloneqq P^f_T$. The Gaussian smoother obtains $\big\lbrace m_k^s, P^s_k\colon k=1,2,\ldots, T-1 \big\rbrace$ by sequentially computing
+	\begin{equation}
+		\begin{split}
+			D_{k+1} &= \cov*{X_k, X_{k+1}^\trans \cond y_{1:k}}, \\
+			G_k &= D_{k+1} \, \big( P^-_{k+1} \big)^{-1}, \\
+			m^s_k &= m_k^f + G_k \, (m^s_{k+1} - m^-_{k+1}), \\
+			P^s_k &= P_k^f + G_k \, (P^s_{k+1} - P^-_{k+1}) \, G_k^\trans,
+		\end{split}
+	\end{equation}
+	for $k=T-1, T-2,\ldots, 1$.
+\end{algorithm}
+
+In order to compute the integrals/expectations in Algorithm~\ref{alg:gfs}, it is often necessary to approximate the transition density by
+%
+\begin{equation}
+	p_{X_{k} \cond X_{k-1}}(x_k \cond x_{k-1}) \approx \mathrm{N}\big(x_k \cond \expec{X_k \cond X_{k-1}}, \cov{X_k \cond X_{k-1}}\big).
+	\label{equ:gfs-transition}
+\end{equation}
+%
+There are various approaches to approximate the mean and covariance in the transition density above. One popular approach is linearising the SDE (or its discretisation) by using, for example, Taylor expansions. This leads to (continuous-discrete) extended Kalman filters and smoothers~\citep{Jazwinski1970}. Another commonly used approach is to solve the ODEs (see, e.g., Equation~\eqref{equ:mean-ode}) that characterise the mean and covariance functions of the SDE~\citep{Sancho1970, Jazwinski1970, Maybeck1982, SimoGFS2013}. However this ODE approach requires to compute expectations with respect to the probability measure of SDEs, which in practice requires further approximation schemes (such as Monte Carlo). 
+
+We can also approximate the SDE by a Gaussian increment-based discretisation defined as
+%
+\begin{equation}
+	X_k \approx f_{k-1}(X_{k-1}) + q_{k-1}(X_{k-1}), \label{equ:approx-transition-model}
+\end{equation}
+%
+where $q_{k-1}(X_{k-1}) \sim \mathrm{N}(0, Q_{k-1}(X_{k-1}))$. In particular, $\expec{X_k \cond X_{k-1}} \approx f_{k-1}(X_{k-1})$ and $\cov{X_k \cond X_{k-1}} \approx Q_{k-1}(X_{k-1})$. The choice of the functions $f_{k-1} \colon \R^{d} \to \R^d$ and $Q_{k-1} \colon \R^{d} \to \R^{d \times d}$ depends on the discretisation method  used for the approximation. 
+%
+\begin{example}
+For instance, the Euler--Maruyama scheme gives
+\begin{equation}
+	\begin{split}
+		f_{k-1}(X_{k-1}) &= X_{k-1} + a(X_{k-1}, t_{k-1}) \, (t_k - t_{k-1}), \\
+		Q_{k-1}(X_{k-1}) &= b(X_{k-1}, t_{k-1}) \, b(X_{k-1}, t_{k-1})^\trans \, (t_k - t_{k-1}).
+	\end{split}
+	\label{equ:gfs-euler-maruyama}
+\end{equation}
+%
+Furthermore, in Chapter~\ref{chap:tme} we illustrate a Taylor moment expansion-based approach generalising the Euler--Maruyama scheme for approximating the transition coefficients in Equation~\eqref{equ:gfs-transition}. 
+\end{example}
+%
+Recall that the expectations in Algorithm~\ref{alg:gfs} are usually hard to compute exactly for non-linear models. However, we can use quadrature methods, for example, Gauss--Hermite quadrature~\citep{Davis1984, Arasaratnam2007}, unscented transform~\citep{Julier2004}, spherical cubature~\citep{Cubature2009, Simo2012}, or sparse-grid quadratures~\citep{Jia2012, Radhakrishnan2016} to compute them numerically. 
+
+\subsection{Non-Gaussian approximate smoothing}
+\label{sec:other-filters-smoothers}
+Despite the simplicity and efficiency of Gaussian approximated filtering and smoothing, these might lead to poor approximations for densities that are, for example, multi-modal or skewed~\citep{Sarkka2013}. Moreover,~\citet{Zhao2020SSDGP} show that, for many SS-DGPs constructions, the Kalman gain (i.e., $K_k$ in Algorithm~\ref{alg:gfs}) of Gaussian approximated filters and smoothers converge to zero as $t\to\infty$. This can be problematic as a zero Kalman gain means that no further information from data is used for updating the posterior distributions. This issue is detailed in Section~\ref{sec:identi-problem}. Hence, the aim of this section is to briefly review some other non-linear filters and smoothers that could be useful for solving the continuous-discrete model in Equation~\eqref{equ:cd-model} without relying on Gaussian approximations.  
+
+One way to compute the general filtering and smoothing densities is by using sequential Monte Carlo (SMC) methods~\citep{Chopin2020}. This class of methods considers Monte Carlo approximations of the integrals in Equations~\eqref{equ:cd-filtering-bayes} and~\eqref{equ:cd-smoothing-bayes} instead of Gaussian quadrature ones. They sequentially propose new Monte Carlo samples that they then weight via a potential function, and use a resampling step in order to keep weight distribution non-degenerate~\citep{Docet2000, Simon2004, Christophe2010}. These result in two generic classes of methods called particle filters and particle smoothers retaining linear complexity at the cost of losing the closed-form interpretation. These methods can be customised to the problem at hand so as to provide better approximations of the distributions~\citep{Chopin2020}. In particular, in the context of SS-DGPs, \citet{Zhao2020SSDGP} show that they result in a better approximation of the posterior density for regression problems such as the rectangular signal in Figure~\ref{fig:gp-fail}. However, parameter learning in particle filters can be problematic, as the resampling procedure, in general, makes their loss functions non-differentiable. This can be addressed by using smooth resampling methods, such as the one in~\citet{Corenflos2021OT}.
+
+Another way to compute the filtering and smoothing densities is to think of them as solutions of ODEs/partial differential equations (PDEs). These connections are well-known for continuous-continuous state-space models (i.e., where instead of the discrete measurements in Equation~\eqref{equ:cd-model} we have a continuous measurement modelled as an SDE depending on the state), such as the Kalman--Bucy filter~\citep{KalmanBucy1961} for linear models. More generally, for non-linear continuous state-space models, the filtering density~\citep{Kushner1964, Zakai1969, Bain2009, Sarkka2013} is governed by the Kushner--Stratonovich equation or Zakai's equation\footnote{Note that Zakai's equation gives \emph{unnormalised} filtering densities.}. For the PDEs that characterise the continuous smoothing solutions, see, for example,~\citet[][Algorithm 10.30]{Sarkka2019} or~\citet{Anderson1972}.
+
+Analogously to the continuous filtering and smoothing, it is also possible to obtain continuous-discrete posterior densities by solving certain PDEs or ODEs. For example, \citet{Jazwinski1970, Beard1999, Challa2000} show that one can combine the Fokker--Planck--Kolmogorov equation and Bayes' rule in order to compute the filtering solution. More specifically, Fokker--Planck--Kolmogorov equation is used to predict the state in Equation \eqref{equ:cd-filtering-predictive}, while Bayes' rule is then used to update the predicted state into the filtered state as per the filtering formulation in Equation~\eqref{equ:cd-filtering-bayes}. In a different flavour, \citet{Brigo1998, Koyama2018} consider the projection filter and smoother, which consist in projecting the filtering and smoothing solutions (of certain families of probability densities) on the space of their density parameters (e.g., the natural parameters of the exponential family). This transforms the problem in a system of ODEs in their density parameters that one then can solve instead of solving the original problem.
+
+\citet{Archambeau2007, Archambeau2008, XuechenLi2020} show that one can also approximate the filtering/smoothing solution by another SDE. The idea is to use a parametrised SDE~\citep[e.g., a linear SDE is used in][]{Archambeau2007, Archambeau2008} to approximate the filtering/smoothing solution and learn the SDE parameters by minimising the Kullback--Leibler (KL) divergence from the true filtering/smoothing distribution. Once this approximate SDE is learnt, the statistical properties (e.g., mean or covariance) of the filtering/smoothing solution can be computed in closed-form from the approximate linear SDE or by simulating trajectories from the approximate SDE (if the SDE is non-linear). Recall that solutions of SDEs are Markov processes. This SDE-based variational filtering/smoothing method is indeed reasonable in the sense that the optimal variational distribution (among a family of parametric variational distributions) for minimising the KL divergence admits the Markov property as shown in~\citet[][Lemma 1]{Courts2021}.
+
+For more comprehensive reviews of non-linear filtering and smoothing methods, we refer the reader to, for example, \citet{Jazwinski1970, Maybeck1982, Sarkka2013, Bain2009, Law2015, Evensen2009, Doucet2001, Sarkka2019}.
+
+\section{Some theorems}
+\label{sec:useful-theorem}
+For the sake of self-containedness, in this section we list several intermediate results that will be used in the course of the thesis.
+
+\begin{theorem}[Cauchy product]
+	\label{thm:cauchy-product}
+	Let $\sum^\infty_{i=0} \alpha_i \, x^i$ and $\sum^\infty_{i=0} \beta_i \, x^i$ be two power series of $x$ with convergence radius $D_{\alpha} > 0$ and $D_{\beta} > 0$ . Then their product is a power series
+	\begin{equation}
+		\Big(\sum^\infty_{i=0} \alpha_i \,x^i \Big)\, \Big(\sum^\infty_{i=0} \beta_i \,x^i \Big) = \sum^\infty_{k=0} \Big(\sum^k_{j=0} \alpha_j\, \beta_{k-j}\Big)\, x^k
+	\end{equation}
+	on an open disk of radius $D \geq \min(D_{\alpha}, D_{\beta})$~\citep[see, e.g.,][Theorem 2.37]{Canuto2015}.
+\end{theorem}
+We use the Cauchy product in Theorem~\ref{thm:tme-cov-pd} to truncate the product of two finite power series. 
+
+\begin{theorem}[Weyl's inequality]
+	\label{thm:weyl-inequality}
+	Let $A$ and $B$ be Hermitian matrices of size $n\times n$. Also let $\lambda_{1} \geq \cdots \geq \lambda_{n}$ denote the ordered eigenvalues of any $n\times n$ Hermitian matrix. Then
+	\begin{equation}
+		\lambda_i(A) + \lambda_{n}(B) \leq \lambda_i(A+B) \leq \lambda_i(A) + \lambda_{1}(B),
+	\end{equation}
+	for $i=1,\ldots, n$.
+\end{theorem}
+Weyl's inequality was originally posed by~\citet{Weyl1912}, and it can also be found, for example, in~\citet[][Theorem 8.4.11]{Bernstein2009},~\citet{HornBook1991}, or~\citet[][Section 5]{Helmke1995}. Weyl's inequality is used in Theorem~\ref{thm:tme-cov-pd} to form a lower bound on the minimum eigenvalue of a covariance approximation.
+
+\begin{theorem}[Langenhop (1960)]
+	\label{thm:langenhop}
+	Let $u\colon \T \to \R_{\geq0}$ and $f\colon \T \to \R_{\geq0}$ be continuous functions, and let $v\colon \R_{\geq0} \to \R_{\geq 0}$ be a continuous non-decreasing function with $v>0$ on $\R_{>0}$. Now consider the invertible function
+	\begin{equation}
+	G(r) = \int^r_{r_0} \frac{1}{v(\tau)} \diff \tau, \quad r>0, \quad r_0>0,
+	\end{equation}
+	and its inverse function $G^{-1}$ defined on domain $E$. Suppose that there is a $t_2\in\T$ such that $G(u(s))-\int^t_s f(\tau) \diff \tau \in E$ for all $s,t\in\T$ and $s\leq t \leq t_2$. If the following inequality is verified,
+	\begin{equation}
+	u(t) \geq u(s) - \int^t_s f(\tau) \, v(u(\tau)) \diff \tau, \quad s,t\in\T, \quad s\leq t,
+	\end{equation}
+	then 
+	\begin{equation}
+	u(t) \geq G^{-1} \Bigg( G(u(s)) - \int^t_s f(\tau) \diff \tau \Bigg), \quad s, t, t_2 \in \T, \quad s\leq t \leq t_2.
+	\end{equation}
+\end{theorem}
+\begin{remark}
+    Note that Theorem~\ref{thm:langenhop} is independent of the choice of $r_0 > 0$.
+\end{remark}
+Langenhop's inequality was originally derived in \citet{Langenhop1960}. A more modern presentation can be found, for example, in ~\citet[][Theorem 2.3.2]{Pachpatte1997}. This theorem is used in Remark~\ref{remark:langenhop-var-f} to obtain a positive lower bound on the variance of an SDE solution.
+
+\begin{theorem}[Peano--Baker series]
+	\label{thm:peano-baker}
+	Consider linear ODE of the form
+	%
+	\begin{equation}
+		\frac{\diff x(t)}{\diff t} = A(t) \, x(t) + z(t), \quad x(t_0) = x_0 \in \R^d,
+	\end{equation}
+	%
+    where the coefficients $A\colon \T \to \R^{d \times d}$ and $z\colon \T \to \R^{d}$ are locally bounded measurable functions. Then for every $t_0, t\in\T$, the ODE above has a unique solution of the form
+	%
+	\begin{equation}
+		x(t) = \cu{\Lambda}(t,t_0) \, \Bigg( x_0 + \int^t_{t_0} \cu{\Lambda}(t,s) \, z(s) \diff s \Bigg).
+		\label{equ:peano-ode-solution}
+	\end{equation}
+	%
+	If moreover $A$ and $z$ are continuous functions, then $\cu{\Lambda}$ can be represented by its Peano--Baker series
+	\begin{equation}
+		\cu{\Lambda}(t,t_0) = I + \int^t_{t_0}A(s) \diff s + \int^t_{t_0} A(s_1) \int^{s_1}_{t_0} A(s_2) \diff s_2 \diff s_1 + \cdots,
+	\end{equation}
+	for all $t \in \T$.
+\end{theorem}
+
+While the continuity of $A$ and $z$ is not a necessary condition for the existence of $\cu{\Lambda}$ (cf. Theorem~\ref{thm:linear-sde-solution}), the fact that its Peano--Baker series approximation is compactly convergent relies on the continuity of $A$ and $z$~\citep{Baake2011, Brogan2011}. Other constructions of $\cu{\Lambda}$ include, for example, Magnus expansion~\citep{Moan2008MagnusConv} but they have somewhat stricter hypotheses.
+
+\begin{theorem}[Solution of linear SDEs]
+	\label{thm:linear-sde-solution}
+	Let $A\colon \T \to \R^{d\times d}$ and $B\colon \T \to \R^{d\times w}$ be locally bounded measurable functions, and let $W \colon \T \to \R^w$ be a Wiener process. Then the solution of linear SDE of the form
+	%
+	\begin{equation}
+		\diff U(t) = A(t) \, U(t) \diff t + B(t) \diff W(t)
+		\label{equ:thm-sol-lin-sde}
+	\end{equation}
+	%
+	is given by
+	%
+	\begin{equation}
+		U(t) = \Lambda(t)\,U(t_0) + \Lambda(t)\int^t_{t_0} (\Lambda(s))^{-1} \, B(s) \, \diff W(s),
+		\label{equ:solution-linear-sdes}
+	\end{equation}
+	%
+	where $\Lambda$ is the unique solution of the matrix ODE
+	\begin{equation}\label{equ:solution-linear-sdes-initial-condition}
+		\frac{\diff x(t)}{\diff t} = A(t) \, x(t), \quad x(t_0) = I_d \in \R^{d \times d}, \quad t \in \T.
+	\end{equation}
+\end{theorem}
+\begin{remark}
+    The $\Lambda$ appearing in Theorem~\ref{thm:linear-sde-solution} is absolutely continuous on $\T$, and is such that $\Lambda(t)$ is a non-singular matrix for all $t\in\T$. Moreover, we have $\cu{\Lambda}(t,s) = \Lambda(t) \, (\Lambda(s))^{-1}$, for all $s, t\in \T$, where $\cu{\Lambda}$ is defined in Theorem~\ref{thm:peano-baker}.
+\end{remark}
+Theorem~\ref{thm:linear-sde-solution} can be found in~\citet[][Section 5.6]{Karatzas1991}. We used it in Theorem~\ref{thm:ss-dgp-cov} in order to prove the strong existence of solutions to the SDE characterisation of SS-DGP as well as to give an explicit expression for the covariance functions of SS-DGP solutions. Noting that the conditions in Definitions~\ref{def:strong-solution} and~\ref{def:pathwise-unique} are verified, the process defined in Equation~\eqref{equ:solution-linear-sdes} is a strong solution, and the pathwise uniqueness holds for the SDE in Equation~\eqref{equ:thm-sol-lin-sde}~\citep[see,][Section 5.6]{Karatzas1991}.

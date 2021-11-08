@@ -1,0 +1,57 @@
+%!TEX root = dissertation.tex
+\chapter{Summary and discussion}
+\label{chap:summary}
+In this chapter we present a concise summary of Publications I--VII as well as discussion on a few unsolved problems and possible future extensions.
+
+\section{Summary of publications}
+This section briefly summaries the contributions of Publications~I--VII and highlights their significances.
+
+\subsection*{Publication~\cp{paperTME} (Chapter~\ref{chap:tme})}
+This paper proposes a new class of non-linear continuous-discrete Gaussian filters and smoothers by using the Taylor moment expansion (TME) scheme to predict the means and covariances from SDEs. The main significance of this paper is that the TME method can provide asymptotically exact solutions of the predictive mean and covariances required in the Gaussian filtering and smoothing steps. Secondly, the paper analyses the positive definiteness of TME covariance approximations and thereupon presents a few sufficient conditions to guarantee the positive definiteness. Lastly, the paper analyses the stability of TME Gaussian filters.
+
+\subsection*{Publication~\cp{paperSSDGP} (Chapter~\ref{chap:dssgp})}
+This paper introduces state-space representations of a class of deep Gaussian processes (DGPs). More specifically, the paper defines DGPs as vector-valued stochastic processes over collections of conditional GPs, thereupon, the paper represents DGPs in hierarchical systems of the SDE representations of their conditional GPs. The main significance of this paper is that the resulting state-space DGPs (SS-DGPs) are Markov processes, so that the SS-DGP regression problem is computationally cheap (i.e., linear with respect to the number of measurements) by using continuous-discrete filtering and smoothing methods. Secondly, the paper identifies that for a certain class of SS-DGPs the Gaussian filtering and smoothing methods fail to learn the posterior distributions of their state components. Finally, the paper features a real application of SS-DGPs in modelling a gravitational wave signal. 
+
+\subsection*{Publication~\cp{paperKFSECG} (Section~\ref{sec:spectro-temporal})}
+This paper is an extension of Publication~\cp{paperKFSECGCONF}. In particular, the quasi-periodic SDEs are used to model the Fourier coefficients instead of the Ornstein--Uhlenbeck ones used in Publication~\cp{paperKFSECGCONF}. This consideration leads to state-space models for which the measurement representations are time-invariant therefore, one can use steady-state Kalman filters and smoothers to solve the spectro-temporal estimation problem with lower computational cost compared to Publication~\cp{paperKFSECGCONF}. This paper also expands the experiments for atrial fibrillation detection by taking into account more classifiers. 
+
+\subsection*{Publication~\cp{paperDRIFT} (Section~\ref{sec:drift-est})}
+This paper is concerned with the state-space GP approach for estimating unknown drift functions of SDEs from partially observed trajectories. This approach is significant mainly in terms of computation, as the computational complexity scales linearly in the number of measurements. In addition, the state-space GP approach allows for using high-order It\^{o}--Taylor expansions in order to give accurate SDE discretisations without the necessity to compute the covariance matrices of the derivatives of the GP prior.
+
+\subsection*{Publication~\cp{paperKFSECGCONF} (Section~\ref{sec:spectro-temporal})}
+This paper introduces a state-space probabilistic spectro-temporal estimation method and thereupon applies the method for detecting atrial fibrillation from electrocardiogram signals. The so-called probabilistic spectro-temporal estimation is a GP regression-based model for estimating the coefficients of Fourier expansions. The main significance of this paper is that the state-space framework allows for dealing with large sets of measurements and high-order Fourier expansions. Also, the combination of the spectro-temporal estimation method and deep convolutional neural networks shows efficacy for classifying a class of electrocardiogram signals.
+
+\subsection*{Publication~\cp{paperMARITIME} (Section~\ref{sec:maritime})}
+This paper reviews sensor technologies and machine learning methods for autonomous maritime vessel navigation. In particular, the paper lists and reviews a number of studies that use deep learning and GP methods for vessel trajectory analysis, ship detection and classification, and ship tracking. The paper also features a ship detection example by using a deep convolutional neural network. 
+
+\subsection*{Publication~\cp{paperRNSSGP} (Section~\ref{sec:l1-r-dgp})}
+This paper solves $L^1$-regularised DGP regression problems under the alternating direction method of multipliers (ADMM) framework. The significance of this paper is that one can introduce regularisation (e.g., sparseness or total variation) at any level of the DGP component hierarchy. Secondly, the paper provides a general framework that allows for regularising both batch and state-space DGPs. Finally, the paper presents a convergence analysis for the proposed ADMM solution of $L^1$-regularised DGP regression problems.
+
+\section{Discussion}
+Finally, we end this thesis with discussion on some unsolved problems and possible future extensions.
+
+\subsection*{Positive definiteness analysis for high-order and high-dimensional TME covariance approximation}
+Theorem~\ref{thm:tme-cov-pd} provides a sufficient condition to guarantee the positive definiteness of TME covariance approximations. However, the use of Theorem~\ref{thm:tme-cov-pd} soon becomes infeasible as the expansion order $M$ and the state dimension $d$ grow large. In practice, it can be easier to check the positive definiteness numerically when $d$ is small. 
+
+\subsection*{Practical implementation of TME}
+A practical challenge with implementing TME consists in the presence of derivative terms in $\A$ (see, Equation~\eqref{equ:generator-ito}). This in turn implies that the iterated generator $\A^M$ further requires the computation of derivatives of the SDE coefficients up to order $M$. While the derivatives of $\A$ are easily computed by hand, the derivatives in $\A^M$ require more consideration as they involve numerous applications of the chain rule, not to mention the multidimensional operator $\Am$ in Remark~\ref{remark:multidim-generator}.
+
+While in our current implementation we chose to use symbolic differentiation (for ease of implementation as well as portability across languages), several things can be said against using it. Symbolic differentiation explicitly computes full Jacobians, where only vector-Jacobian/Jacobian-vector products would be necessary. This induces an unnecessary overhead that grows with the dimension of the problem. Also, symbolic differentiation is usually independent of the philosophy of modern differentiable programming frameworks and the optimisation for parallelisable hardware (e.g., GPUs), hence they may incur a loss of performance on these.
+
+Automatic differentiation tools, for instance, TensorFlow and JaX are amenable to computing the derivatives in $\Am$. Furthermore, they provide efficient computations for Jacobian-vector/vector-Jacobian products. We hence argue that these tools are worthwhile for performance improvement in the future\footnote{By the time of the pre-examination of this thesis, the TME method is now implemented in JaX as an open source library (see, Section~\ref{sec:codes}).}.
+
+\subsection*{Generalisation of the identifiability analysis}
+The identifiability analysis in Section~\ref{sec:identi-problem} is limited to SS-DGPs for which the GP elements are one-dimensional. This dimension assumption is used in order to derive Equation~\eqref{equ:vanish-cov-eq1} in closed-form. However, it is of interest to see whether we can generalise Lemma~\ref{lemma:vanishing-prior-cov} for SS-DGPs that have multidimensional GP elements.
+
+The abstract Gaussian filter in Algorithm~\ref{alg:abs-gf} assumes that the prediction steps are done exactly. However, this assumption may not always be realistic because Gaussian filters often involve numerical integrations to predict through SDEs, for example, by using sigma-point methods. Hence, it is important to verify if Lemma~\ref{lemma:vanishing-prior-cov} still holds when one computes the filtering predictions by some numerical means.
+
+\subsection*{Spatio-temporal SS-DGPs}
+SS-DGPs are stochastic processes defined on temporal domains. In order to model spatio-temporal data, it is necessary to generalise SS-DGPs to take values in infinite-dimensional spaces~\citep{Giuseppe2014}. A path for this generalisation is to leverage the stochastic partial differential equation (SPDE) representations of spatio-temporal GPs. To see this, let us consider an $\mathbb{H}$-valued stochastic process $U \colon \T \to \mathbb{H}$ governed by a well-defined SPDE
+%
+\begin{equation}
+	\diff U(t) = A \, U(t) \diff t + B \diff W(t) \nonumber
+\end{equation}
+%
+with some boundary and initial conditions, where $A\colon \mathbb{H} \to \mathbb{H}$ and $B\colon \mathbb{W} \to \mathbb{H}$ are linear operators, and $W\colon \T \to \mathbb{W}$ is a $\mathbb{W}$-valued Wiener process. Then we can borrow the idea presented in Section~\ref{sec:ssdgp} to form a spatio-temporal SS-DGP by hierarchically composing such SPDEs of the form above.
+
+A different path for generalising SS-DGPs is shown by~\citet{Emzir2020}. Specifically, they build deep Gaussian fields based on the SPDE representations of \matern fields~\citep{Whittle1954, Lindgren2011}. However, we should note that this approach gives random fields instead of spatio-temporal processes.

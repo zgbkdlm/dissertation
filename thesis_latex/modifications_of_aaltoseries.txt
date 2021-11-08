@@ -1,0 +1,10 @@
+Zheng Zhao made the following changes to the aaltoseries.cls class.
+
+1. Removed the "DRAFT" signs.
+2. Changed \@date to a fix date October 4 in the preface environment.
+3. Changed "List of Publications" to "List of publications". 
+4. Added copyright notice for \addpublication with "submitted" option.
+
+You can also clearly see the differences by using the `diff` command.
+
+Disclaimer: The changes above do not create a derivative of aaltoseries, therefore, the CC Attribution Non-derivative license is not violated.

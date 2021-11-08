@@ -1,0 +1,23 @@
+name: Dissertation latex compile
+on: 
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Workflow run name'
+        required: true
+        default: 'Manual unittest'
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: dissertation.tex
+          latexmk_shell_escape: true
+          pre_compile: "cd thesis_latex"
+          post_compile: "latexmk -c"
+

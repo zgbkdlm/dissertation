@@ -1,0 +1,8 @@
+numpy
+gpflow
+matplotlib
+scipy
+scikit-learn
+sympy
+tme
+

@@ -1,0 +1,205 @@
+%!TEX root = dissertation.tex
+% Generic macro definitions for a number of math operations.
+%
+% To use this macro you need packages: amsmath, amssymb, bm, mathtools
+%
+% Zheng Zhao @ 2019
+% zz@zabemon.com
+%
+% License: Creativice Commons Attribution 4.0 International (CC BY 4.0)
+%
+
+% Adaptive bold math font command
+\newcommand{\cu}[1]{
+	\ifcat\noexpand#1\relax
+	\bm{#1}
+	\else
+	\mathbf{#1}
+	\fi
+}
+
+\newcommand{\tash}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\tashh}[3]{\frac{\partial^2 #1}{\partial #2 \, \partial #3}}
+
+% Slightly smaller spacing than a pure mathop
+\newcommand{\diff}{\mathop{}\!\mathrm{d}}
+
+% Complex
+\newcommand{\imag}{\mathrm{i}}
+
+% Exponential
+\newcommand{\expp}{\mathrm{e}}
+
+% \mid used in condition in probability e.g., E[x \mid y]
+\newcommand{\cond}{{\;|\;}}
+\newcommand{\condbig}{{\;\big|\;}}
+\newcommand{\condBig}{{\;\Big|\;}}
+\newcommand{\condbigg}{{\;\bigg|\;}}
+\newcommand{\condBigg}{{\;\Bigg|\;}}
+
+\let\sup\relax
+\let\inf\relax
+\let\lim\relax
+\DeclareMathOperator*{\argmin}{arg\,min\,}  % Argmin
+\DeclareMathOperator*{\argmax}{arg\,max\,}  % Argmax
+\DeclareMathOperator*{\sup}{sup\,}  % sup better spacing
+\DeclareMathOperator*{\inf}{inf\,}  % inf
+\DeclareMathOperator*{\lim}{lim\,}  % inf
+
+\newcommand{\sgn}{\operatorname{sgn}}           % sign function
+
+\newcommand{\expecsym}{\operatorname{\mathbb{E}}}     % Expec
+\newcommand{\covsym}{\operatorname{Cov}}     % Covariance
+\newcommand{\varrsym}{\operatorname{Var}}     % Variance
+\newcommand{\diagsym}{\operatorname{diag}}     % Diagonal matrix
+\newcommand{\tracesym}{\operatorname{tr}}           % Trace
+
+% Two problems for E, Cov, Var etc. with brackets
+% 1. \operatorname does not give space for bracket, thus we need to manually add \, after E. If \left\right is used then no need to add space.
+% 2. \left\right does not give correct vertical spacing. The brackets will be shifted down slightly.
+% Solution is to use \left\right when it is inevitable.
+% Use \expec when you do not want auto-height
+% Use \expec* when you want auto-height
+% Use \expecsym when you want to fully define the behaviour, which only gives the E symbol wihout brackets. 
+\let\expec\relax
+\let\cov\relax
+\let\varr\relax
+\let\diag\relax
+\let\trace\relax
+
+\makeatletter
+% E [ ]
+\newcommand{\expec}{\@ifstar{\@expecauto}{\@expecnoauto}}
+\newcommand{\@expecauto}[1]{\expecsym \left[ #1 \right]}
+\newcommand{\@expecnoauto}[1]{\expecsym \, [#1]}
+\newcommand{\expecbig}[1]{\expecsym \big[ #1 \big]}
+\newcommand{\expecBig}[1]{\expecsym \Big[ #1 \Big]}
+\newcommand{\expecbigg}[1]{\expecsym \bigg[ #1 \bigg]}
+\newcommand{\expecBigg}[1]{\expecsym \Bigg[ #1 \Bigg]}
+
+
+% Cov [ ]
+\newcommand{\cov}{\@ifstar{\@covauto}{\@covnoauto}}
+\newcommand{\@covauto}[1]{\covsym \left[ #1 \right]}
+\newcommand{\@covnoauto}[1]{\covsym \, [#1]}
+\newcommand{\covbig}[1]{\covsym \big[ #1 \big]}
+\newcommand{\covBig}[1]{\covsym \Big[ #1 \Big]}
+\newcommand{\covbigg}[1]{\covsym \bigg[ #1 \bigg]}
+\newcommand{\covBigg}[1]{\covsym \Bigg[ #1 \Bigg]}
+
+% Var [ ]
+\newcommand{\varr}{\@ifstar{\@varrauto}{\@varrnoauto}}
+\newcommand{\@varrauto}[1]{\varrsym \left[ #1 \right]}
+\newcommand{\@varrnoauto}[1]{\varrsym \, [#1]}
+\newcommand{\varrbig}[1]{\varrsym \big[ #1 \big]}
+\newcommand{\varrBig}[1]{\varrsym \Big[ #1 \Big]}
+\newcommand{\varrbigg}[1]{\varrsym \bigg[ #1 \bigg]}
+\newcommand{\varrBigg}[1]{\varrsym \Bigg[ #1 \Bigg]}
+
+% Diag ( )
+\newcommand{\diag}{\@ifstar{\@diagauto}{\@diagnoauto}}
+\newcommand{\@diagauto}[1]{\diagsym \left( #1 \right)}
+\newcommand{\@diagnoauto}[1]{\diagsym \, (#1)}
+\newcommand{\diagbig}[1]{\diagsym \big( #1 \big)}
+\newcommand{\diagBig}[1]{\diagsym \Big( #1 \Big)}
+\newcommand{\diagbigg}[1]{\diagsym \bigg( #1 \bigg)}
+\newcommand{\diagBigg}[1]{\diagsym \Bigg( #1 \Bigg)}
+
+% tr ( )
+\newcommand{\trace}{\@ifstar{\@traceauto}{\@tracenoauto}}
+\newcommand{\@traceauto}[1]{\tracesym \left( #1 \right)}
+\newcommand{\@tracenoauto}[1]{\tracesym \, (#1)}
+\newcommand{\tracebig}[1]{\tracesym \big( #1 \big)}
+\newcommand{\traceBig}[1]{\tracesym \Big( #1 \Big)}
+\newcommand{\tracebigg}[1]{\tracesym \bigg( #1 \bigg)}
+\newcommand{\traceBigg}[1]{\tracesym \Bigg( #1 \Bigg)}
+\makeatother
+
+\newcommand{\A}{\mathcal{A}}           % Generator
+\newcommand{\Am}{\overline{\mathcal{A}}}           % Generator
+
+% Transpose symbol using (DIN) EN ISO 80000-2:2013 standard
+\newcommand*{\trans}{{\mkern-1.5mu\mathsf{T}}}
+
+\newcommand*{\T}{\mathbb{T}} % Set of temporal varialbes
+\newcommand*{\R}{\mathbb{R}} % Set of real numbers
+\newcommand*{\Q}{\mathbb{Q}} % Set of rational numbers
+\newcommand*{\N}{\mathbb{N}} % Set of natural numbers
+\newcommand*{\Z}{\mathbb{Z}} % Set of integers
+
+\newcommand*{\BB}{\mathcal{B}} % Borel sigma-algebra
+\newcommand*{\FF}{\mathcal{F}} % Sigma-algebra
+\newcommand*{\PP}{\mathbb{P}} % Probability measure
+\newcommand*{\GP}{\mathrm{GP}} % GP
+
+\newcommand{\mineig}{\lambda_{\mathrm{min}}}
+\newcommand{\maxeig}{\lambda_{\mathrm{max}}}
+
+% Norm and inner product
+%% use \norm* to enable auto-height
+
+%% Some notes on these paired delimiters:
+%% It is argued that there should be no space between operator and delimiter, but this might not be suitable in some cases. Indeed log(x) should have no space between log and (, but log |x| with a mathop{} spacing looks absolutely much prettier than log|x| because here |x| is an argument. Think, shouldn't it be log(|x|) in full expansion, and we ignored () with spacing?
+%% See discussion in https://tex.stackexchange.com/questions/461806/missing-space-with-declarepaireddelimiter
+%
+\let\norm\relax
+\DeclarePairedDelimiter{\normbracket}{\lVert}{\rVert}
+\newcommand{\norm}{\normbracket}
+\newcommand{\normbig}[1]{\big \lVert #1 \big \rVert}
+\newcommand{\normBig}[1]{\Big \lVert #1 \Big\rVert}
+\newcommand{\normbigg}[1]{\bigg \lVert #1 \bigg\rVert}
+\newcommand{\normBigg}[1]{\Bigg \lVert #1 \Bigg\rVert}
+%\makeatletter
+%\newcommand{\norm}{\@ifstar{\@normnoauto}{\@normauto}}
+%\newcommand{\@normauto}[1]{\left\lVert#1\right\rVert}
+%\newcommand{\@normnoauto}[1]{\lVert#1\rVert}
+%\makeatother
+
+\let\innerp\relax
+\DeclarePairedDelimiter{\innerpbracket}{\langle}{\rangle}
+\newcommand{\innerp}{\innerpbracket}
+%\makeatletter
+%\newcommand{\innerp}{\@ifstar{\@inpnoautp}{\@inpauto}}
+%\newcommand{\@inpauto}[2]{\left\langle#1, #2\right\rangle}
+%\newcommand{\@inpnoautp}[2]{\left#1, #2\rangle}
+%\makeatother
+
+\let\abs\relax
+\DeclarePairedDelimiter{\absbracket}{\lvert}{\rvert}
+\newcommand{\abs}{\absbracket}
+\newcommand{\absbig}[1]{\big \lvert #1 \big \rvert}
+\newcommand{\absBig}[1]{\Big \lvert #1 \Big\rvert}
+\newcommand{\absbigg}[1]{\bigg \lvert #1 \bigg\rvert}
+\newcommand{\absBigg}[1]{\Bigg \lvert #1 \Bigg\rvert}
+%\makeatletter
+%\newcommand{\abs}{\@ifstar{\@absnoauto}{\@absauto}}
+%\newcommand{\@absauto}[1]{\left\lvert#1\right\rvert}
+%\newcommand{\@absnoauto}[1]{\lvert#1\rvert}
+%\makeatother
+
+% Some functions
+\newcommand{\mBesselsec}{\operatorname{K}_\nu}
+\newcommand{\jacob}{\operatorname{J}}
+\newcommand{\hessian}{\operatorname{H}}
+
+% Literals
+\def\matern{Mat\'{e}rn }
+
+% Theorem envs
+% Dummy env for those sharing the same numbering system.
+\newtheorem{envcounter}{EnvcounterDummy}[chapter]
+
+\newtheorem{theorem}[envcounter]{Theorem}
+\newtheorem{proposition}[envcounter]{Proposition}
+\newtheorem{lemma}[envcounter]{Lemma}
+\newtheorem{corollary}[envcounter]{Corollary}
+\newtheorem{remark}[envcounter]{Remark}
+\newtheorem{example}[envcounter]{Example}
+
+% Envs that are mutually independently numbered, well, actually don't 
+%\newtheorem{definition}{Definition}[chapter]
+%\newtheorem{algorithm}{Algorithm}[chapter]
+%\newtheorem{assumption}{Assumption}[chapter]
+\newtheorem{definition}[envcounter]{Definition}
+\newtheorem{algorithm}[envcounter]{Algorithm}
+\newtheorem{assumption}[envcounter]{Assumption}
