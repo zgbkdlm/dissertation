@@ -28,4 +28,4 @@ Additionally, if you want to run scripts `showcase_gp_rectangular.py` and `showc
 
 # License
 
-The scripts in this folder are under the MIT license.
+You are free to do anything you want with the scripts in this folder, except that `spectro_temporal.py` is under the MIT license.
