@@ -12,11 +12,11 @@ This folder contains Python/Matlab scripts that generate some of the figures in 
 
 6. `spectro_temporal.py`: Spectro-temporal state-space method for estimation of spectrogram. Related to **Figure 5.2**.
 
-7. `TME_estimation_benes.py`: Use TME to estimate a few expectations of a Benes SDE. Related to Figure **3.1**.
+7. `TME_estimation_benes.py`: Use TME to estimate a few expectations of a Benes SDE. Related to **Figure 3.1**.
 
 8. `TME_postive_definite_softplus.py`: Analyse the postive definiteness of the TME covariance estimator for an SDE. Related to **Figure 3.2**.
 
-9. `vanishing_prior_cov.py`: Estimate a cross-covariance of an SS-DGP. Related to Figure **4.8**.
+9. `vanishing_prior_cov.py`: Estimate a cross-covariance of an SS-DGP. Related to **Figure 4.8**.
 
 # Requirements
 

@@ -11,5 +11,6 @@
 *.toc
 *.nav
 *.snm
+pdfa.xmpi
 .idea
-
+__pycache__
