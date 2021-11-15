@@ -49,6 +49,10 @@ Unless otherwise stated, all rights belong to the author Zheng Zhao. This reposi
 
 You are free to download, display, and print `./dissertation.pdf` for your own personal use. Commercial use of it is prohibited.
 
+# Acknowledgement
+
+I would like to thank [Adrien (Monte) Corenflos](https://adriencorenflos.github.io/) <span style="background-color:black; font-size:0.5em">This guy threatened me to write this ack., help!</span>, [Christos Merkatas](https://cmerkatas.github.io/), [Dennis Yeung](https://www.linkedin.com/in/dptyeung/?originalSubdomain=fi), and [Sakira Hassan](https://sakira.github.io/) for their time and efforts for reviewing and checking the languange of the thesis. 
+
 # Contact
 
 Zheng Zhao, zheng.zhao@aalto.fi
