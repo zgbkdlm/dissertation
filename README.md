@@ -51,7 +51,7 @@ You are free to download, display, and print `./dissertation.pdf` for your own p
 
 # Acknowledgement
 
-I would like to thank [Adrien (Monte) Corenflos](https://adriencorenflos.github.io/) <span style="background-color:black; font-size:0.5em">This guy threatened me to write this ack., help!</span>, [Christos Merkatas](https://cmerkatas.github.io/), [Dennis Yeung](https://www.linkedin.com/in/dptyeung/?originalSubdomain=fi), and [Sakira Hassan](https://sakira.github.io/) for their time and efforts for reviewing and checking the languange of the thesis. 
+I would like to thank [Adrien (Monte) Corenflos](https://adriencorenflos.github.io/), [Christos Merkatas](https://cmerkatas.github.io/), [Dennis Yeung](https://www.linkedin.com/in/dptyeung/?originalSubdomain=fi), and [Sakira Hassan](https://sakira.github.io/) for their time and efforts for reviewing and checking the languange of the thesis. 
 
 # Contact
 
