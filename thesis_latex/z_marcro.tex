@@ -187,19 +187,20 @@
 
 % Theorem envs
 % Dummy env for those sharing the same numbering system.
-\newtheorem{envcounter}{EnvcounterDummy}[chapter]
-
-\newtheorem{theorem}[envcounter]{Theorem}
-\newtheorem{proposition}[envcounter]{Proposition}
-\newtheorem{lemma}[envcounter]{Lemma}
-\newtheorem{corollary}[envcounter]{Corollary}
-\newtheorem{remark}[envcounter]{Remark}
-\newtheorem{example}[envcounter]{Example}
-
-% Envs that are mutually independently numbered, well, actually don't 
-%\newtheorem{definition}{Definition}[chapter]
-%\newtheorem{algorithm}{Algorithm}[chapter]
-%\newtheorem{assumption}{Assumption}[chapter]
-\newtheorem{definition}[envcounter]{Definition}
-\newtheorem{algorithm}[envcounter]{Algorithm}
-\newtheorem{assumption}[envcounter]{Assumption}
+% If you would like to customise your environment numbering, you can define a command e.g., \thmnumcounter{section} in your main tex.
+% If \thmnumcounter is undefined, it is assumed that you will deal with defining theorem lemma etc by yourself.
+\makeatletter
+\@ifundefined{thmenvcounter}{}
+{%
+	\newtheorem{envcounter}{EnvcounterDummy}[\thmenvcounter]
+	\newtheorem{theorem}[envcounter]{Theorem}
+	\newtheorem{proposition}[envcounter]{Proposition}
+	\newtheorem{lemma}[envcounter]{Lemma}
+	\newtheorem{corollary}[envcounter]{Corollary}
+	\newtheorem{remark}[envcounter]{Remark}
+	\newtheorem{example}[envcounter]{Example}
+	\newtheorem{definition}[envcounter]{Definition}
+	\newtheorem{algorithm}[envcounter]{Algorithm}
+	\newtheorem{assumption}[envcounter]{Assumption}
+}
+\makeatother
