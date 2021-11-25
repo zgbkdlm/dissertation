@@ -28,6 +28,11 @@ The dissertation is in `./dissertation.pdf`. Feel free to download and read~~
 5. `./scripts`. This folder contains Python scripts that are used to generate some of the figures in the thesis.
 6. `./thesis_latex`. This folder contains the LaTeX source of the thesis. Compiling the tex files here will generate a PDF the same as with `./dissertation.pdf`.
 
+# Satellite repositories
+
+1. [https://github.com/zgbkdlm/ssdgp](https://github.com/zgbkdlm/ssdgp) contains implementation of state-space deep Gaussian processes.
+2. [https://github.com/zgbkdlm/tme](https://github.com/zgbkdlm/tme) and [https://github.com/zgbkdlm/tmefs](https://github.com/zgbkdlm/tmefs) contain implementation of Taylor moment expansion method and its filter and smoother applications.
+
 # Citation
 
 Bibtex:
