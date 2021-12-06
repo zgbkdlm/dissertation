@@ -11,7 +11,7 @@ Pre-examiners: Prof. Kody J. H. Law from The University of Manchester and Prof. 
 
 Opponent: Prof. Manfred Opper from University of Birmingham.
 
-The public defence of the thesis will be streamed online on December 10, 2021 at noon (Helsinki time) via Zoom link https://aalto.zoom.us/j/67529212279. It is free and open to everyone.
+The public defence of the thesis will be streamed online on December 10, 2021 at noon (Helsinki time) via Zoom link https://aalto.zoom.us/j/67529212279. It is free and open to the public, you are welcome to attend.
 
 More details regarding the thesis itself can be found in its title pages.
 
@@ -19,7 +19,7 @@ More details regarding the thesis itself can be found in its title pages.
 
 The dissertation is in `./dissertation.pdf`. Feel free to download and read~~
 
-**Note that you may also find an "official" version in [aaltodoc](http://urn.fi/URN:ISBN:978-952-64-0603-9) published by Aalto University. However, it destroyed the PDF links and outline, making it very painful to read in computer/ipad/inktablet. I believe that you will feel more enjoyable reading `./dissertation.pdf` instead. In terms of content, the one here has no difference with the one in aaltodoc.**
+**Note that you may also find an "official" version in [aaltodoc](http://urn.fi/URN:ISBN:978-952-64-0603-9) published by Aalto University, the content of which has no difference with `./dissertation.pdf`. However, the aaltodoc-version has many readability issues, please use `./dissertation.pdf` instead.**
 
 1. `./dissertation.pdf`. The PDF of the thesis.
 2. `./errata.md`. Errata of the thesis.
@@ -46,7 +46,9 @@ Bibtex:
 }
 ```
 
-Plain text: Zheng Zhao. *State-space deep Gaussian processes with applications*. PhD thesis, Aalto University, 2021.
+Plain text: 
+
+Zheng Zhao. *State-space deep Gaussian processes with applications*. PhD thesis, Aalto University, 2021.
 
 # License
 
