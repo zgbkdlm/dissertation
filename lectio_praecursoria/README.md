@@ -1,5 +1,8 @@
-# Lectio praecursoria
+ # About
 
-Presentation at the public examination of the thesis on December 10, 2021. 
+ Lectio praecursoria given at the public defence of the dissertation. 
 
-To be updated.
+ # Notes
+
+ In case of missing-figure errors, you need to run the scripts in `./scripts` and copy the generated pictures to the corresponding path.
+ 

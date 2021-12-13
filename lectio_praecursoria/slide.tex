@@ -1,23 +1,524 @@
 \documentclass[seriffont, cmap=Beijing, 10pt]{zz}
 
+\newcommand\hmmax{0}
+\newcommand\bmmax{0}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{fouriernc}
+%\usepackage{fouriernc}
+\usepackage{amsmath, amssymb, bm, mathtools}
+\usepackage{animate}
+\usepackage{graphicx}
+
+\usepackage{tikz}
+\usetikzlibrary{fadings}
+\usetikzlibrary{patterns}
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{shapes}
 
 \title{Lectio Praecursoria}
 \subtitle{State-Space Deep Gaussian Processes with Applications}
 
-\date[Nov 30, 2021]{\textit{10 December, 2021}}
-\institute{\textit{Aalto University}}
+\date[10 December 2021]{10 December 2021}
+\institute{Aalto University}
 
 \author[Zheng Zhao]{Zheng Zhao}
+
+\setbeamercovered{transparent}
+\setbeamertemplate{section in toc}[circle]
+
+% Change toc item spacing
+% https://tex.stackexchange.com/questions/170268/separation-space-between-tableofcontents-items-in-beamer
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\beamer@sectionintoc}
+{\vfill}
+{\vskip2.\itemsep}
+{}
+{}
+\makeatother  
+
+% Footnote without numbering
+% https://tex.stackexchange.com/questions/30720/footnote-without-a-marker
+\newcommand\blfootnote[1]{%
+	\begingroup
+	\renewcommand\thefootnote{}\footnote{\scriptsize#1}%
+	\addtocounter{footnote}{-1}%
+	\endgroup
+}
+
+\input{../thesis_latex/z_marcro.tex}
 
 \begin{document}
 
 \titlepage
 
+\begin{frame}{The dissertation}
+	\noindent
+	\begin{minipage}{.48\textwidth}
+		\begin{figure}
+			\centering
+			\fbox{\includegraphics[trim={2cm 2cm 2cm 2cm},width=.8\linewidth,clip]{../thesis_latex/title-pages/title-pages}}
+		\end{figure}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{.48\textwidth}
+		\begin{block}{}
+			Available online:\\ \url{https://github.com/zgbkdlm/dissertation}\\
+			or scan the QR code
+		\end{block}
+		\begin{block}{}
+			\begin{figure}
+				\centering
+				\includegraphics[width=.5\linewidth]{figs/qr-code-thesis}
+			\end{figure}
+		\end{block}
+		\begin{block}{}
+			Companion codes in Python and Matlab are also in $^\wedge$
+		\end{block}
+	\end{minipage}
+\end{frame}
+
 \begin{frame}{Contents}
-	Test
+	This dissertation mainly consists of:
+	\begin{block}{}
+		\tableofcontents
+	\end{block}
+\end{frame}
+
+\section{Continuous-discrete filtering and smoothing with Taylor moment expansion}
+\begin{frame}{Contents}
+	\begin{block}{}
+		\tableofcontents[currentsection]
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		Consider a system
+		%
+		\begin{equation}
+			\begin{split}
+				\diff X(t) &= a(X(t)) \diff t + b(X(t)) \diff W(t), \quad X(t_0) = X_0,\\
+				Y_k &= h(X(t_k)) + \xi_k, \quad \xi_k \sim \mathrm{N}(0, \Xi_k),
+			\end{split}
+		\end{equation}
+		%
+		and a set of data $y_{1:T} = \lbrace y_1, y_2,\ldots, y_T \rbrace$. The goals are to estimate
+		\begin{itemize}
+			\item the (marginal) \alert{filtering} distributions
+			%
+			\begin{equation}
+				p(x_k \cond y_{1:k}), \quad \text{for }k=1,2,\ldots,
+			\end{equation}
+			%
+			\item and the (marginal) \alert{smoothing} distributions
+			%
+			\begin{equation}
+				p(x_k \cond y_{1:T}), \quad \text{for }k=1,2,\ldots,T,
+			\end{equation}
+			%
+		\end{itemize}
+	\end{block}
+	\blfootnote{$p(x \cond y)$ abbreviates $p_{X \cond Y}(x \cond y)$.}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		\begin{figure}
+			\centering
+			\animategraphics[autoplay, loop, width=.49\linewidth]{10}{figs/animes/filter-}{0}{99}
+			\animategraphics[autoplay, loop, width=.49\linewidth]{10}{figs/animes/smoother-}{0}{99}
+			\caption{Filtering (left) and smoothing (right).}
+%			dummy image
+		\end{figure}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		Solving the \alert{filtering} and \alert{smoothing} problems usually involves computing
+		%
+		\begin{equation}
+			\expec{\phi(X(t)) \cond X(s)}
+		\end{equation}
+		%
+		for $t\geq s \in\T$ and some \alert{target function $\phi$}.
+	\end{block}
+	\begin{block}{}
+		For instance, in \alert{Gaussian} approximate filtering and smoothing, we choose $\phi^\mathrm{I}(x)\coloneqq x$ and $\phi^\mathrm{II}(x)\coloneqq x \, x^\trans$ in order to approximate
+		%
+		\begin{equation}
+			\begin{split}
+				p(x_k \cond y_{1:k}) &\approx \mathrm{N}\big(x_k \cond m^f_k, P^f_k\big), \\
+				p(x_k \cond y_{1:T}) &\approx \mathrm{N}\big(x_k \cond m^s_k, P^s_k\big).
+			\end{split}
+		\end{equation}
+		%
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		Thanks to D. Florens-Zmirou and D. Dacunha-Castelle, for any $\phi\in \mathcal{C}(\R^{2\,(M+1)};\R)$, it is possible to
+		%
+		\begin{equation}
+			\expec{\phi(X(t)) \cond X(s)} = \sum^M_{r=0} \A^r\phi(X(s))\,\Delta t^r + R_{M, \phi}(X(s), \Delta t),
+		\end{equation}
+		%
+		where
+		%
+		\begin{equation}
+			\begin{split}
+				\A\phi(x) &\coloneqq (\nabla_x\phi(x))^\trans \, a(x) + \frac{1}{2} \, \tracebig{\Gamma(x) \, \hessian_x\phi(x)},\\
+				\Gamma(x) &\coloneqq b(x) \, b(x)^\trans.
+			\end{split}
+		\end{equation}
+		%
+	\end{block}
+	\begin{block}{}
+		We call this \alert{Taylor moment expansion (TME)}, detailed in Section 3.3.
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		However, the TME approximation to the \alert{covariance} $\cov{X(t) \cond X(s)}$ might not be \alert{positive definite}. Detailed in \alert{Theorem~3.5}.
+	\end{block}
+	\begin{block}{}
+		This problem can be numerically addressed by:
+		\begin{itemize}
+			\item Choose small \alert{time interval} $t-s$.
+			\item Increase the expansion \alert{order} $M$ if the SDE coefficients are regular enough.
+			\item Tune SDE coefficients so that it's positive definite for all $t-s\in\R_{>0}$ (see \alert{Corollary 3.6}).
+			\item Tune SDE coefficients so that it's positive definite for all $X(s)\in\R^d$ (see \alert{Lemma 3.8}).
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		\begin{example}
+			\begin{equation}
+				\begin{split}
+					\diff X^1(t) &= \big( \log(1+\exp(X^1(t))) + \kappa\,X^2(t) \big)\diff t + \diff W_1(t),\\
+					\diff X^2(t) &= \big( \log(1+\exp(X^2(t))) + \kappa\,X^1(t) \big)\diff t + \diff W_2(t),\\
+					X^1(t_0)&=X^2(t_0)=0,
+				\end{split}
+			\end{equation}
+			where $\kappa\in\R$ is a \alert{tunable} parameter. By applying \alert{Corollary 3.6}, the TME-2 covariance approximation to this SDE is positive definite for \alert{all} $t-t_0\in\R_{>0}$, if \alert{$\abs{\kappa}\leq0.5$}.
+		\end{example}
+	\end{block}
+\end{frame}
+
+%\begin{frame}{Stochastic filtering}
+%	\begin{block}{}
+%		\begin{figure}
+%			\centering
+%			\includegraphics[width=.7\linewidth]{../thesis_latex/figs/tme-softplus-mineigs}
+%			\caption{The minimum eigenvalues of TME-2 approximated $\cov{X(t) \cond X(t_0)}$ (denote $\Sigma_2$) w.r.t. $\Delta t=t-t_0$ and $\kappa$.}
+%		\end{figure}
+%	\end{block}
+%\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{block}{}
+		\alert{Section 3.6} details how to run Gaussian filters and smoothers with the TME method.
+	\end{block}
+	\begin{block}{}
+		Under a few assumptions on the system, the TME Gaussian filters and smoothers are \alert{stable} in the sense that (\alert{Theorem 3.17})
+		%
+		\begin{equation}
+			\expecBig{\normbig{X_k - m^f_k}_2^2} \leq (c^f_1)^k \, \trace{P_0} + c^f_2, \quad k=1,2,\ldots
+		\end{equation}
+		%
+		and 
+		\begin{equation}
+			\begin{split}
+				\expecBig{\normbig{X_k - m^s_k}_2^2} &\leq c^f_0(k) + (c^s_1)^{T-k} \, c_2 + c_3, \quad,\\
+				k&=1,2,\ldots,T, \quad T=1,2,\ldots,
+			\end{split}
+		\end{equation}
+		where $c^f_1<1$, $c^s_1<1$, and $c^f_0(k)$ depends on $\expec{\norm{X_k - m^f_k}_2^2}$ \alert{only}. 
+	\end{block}
+\end{frame}
+
+\begin{frame}{Stochastic filtering}
+	\begin{figure}
+		\centering
+		\includegraphics[width=.6\linewidth]{../thesis_latex/figs/tme-duffing-filter-smoother}\\
+		\includegraphics[width=.4\linewidth]{../thesis_latex/figs/tme-duffing-smoother-x1}
+		\includegraphics[width=.4\linewidth]{../thesis_latex/figs/tme-duffing-smoother-x2}
+		\caption{TME on Duffing-van der Pol (\alert{Example 3.19}).}
+	\end{figure}
+\end{frame}
+
+\section{State-space deep Gaussian processes}
+\begin{frame}{Contents}
+	\begin{block}{}
+		\tableofcontents[currentsection]
+	\end{block}
+\end{frame}
+
+%\begin{frame}{Gaussian processes}
+%	\begin{block}{}
+%		$U\colon\T\to\R^d$ is said to be a \alert{Gaussian process (GP)}, if for every $t_1<t_2<\cdots<t_k\in\T$, the random variables $U(t_1), U(t_2), \ldots, U(t_k)$ are Normal distributed. Denoted by (for simplicity, zero mean)
+%		%
+%		\begin{equation}
+%			U(t) \sim \GP\big( 0, C(t,t'; \theta) \big),
+%		\end{equation}
+%		%
+%	\end{block}
+%	\begin{block}{}
+%		A class of \alert{Markov} GPs are governed by linear SDEs of the form:
+%		%
+%		\begin{equation}
+%			\diff U(t) = A(t; \theta) \, U(t) \diff t + B(t; \theta) \diff W(t), \quad U_0\sim \mathrm{N}(0, P_0(\theta)).
+%		\end{equation}
+%		%
+%	\end{block}
+%\end{frame}
+
+\begin{frame}{Gaussian processes}
+		Denote GP by
+		%
+		\begin{equation}
+			U(t) \sim \GP\big( 0, C(t,t'; \theta) \big),
+		\end{equation}
+		%
+		and a class of \alert{Markov} GPs by \alert{linear SDEs} of the form
+		%
+		\begin{equation}
+			\diff U(t) = A(t; \theta) \, U(t) \diff t + B(t; \theta) \diff W(t), \quad U_0\sim \mathrm{N}(0, P_0(\theta)).
+		\end{equation}
+		%
+		\begin{figure}
+			\centering
+			\includegraphics[width=.4\linewidth]{figs/gp-sample-m12}
+			\includegraphics[width=.4\linewidth]{figs/gp-sample-m32}
+			\caption{Samples drawn from two \alert{stationary} GPs.}
+		\end{figure}
+\end{frame}
+
+\begin{frame}{SS-DGPs}
+		To make \alert{non-stationary} ``GPs'', one can let their parameters $\theta$ be processes of $t$, and the parameters of $\theta$ be processes of $t$ again, and so forth following this analogy...
+		This leads to \alert{a} class of \alert{deep GPs (DGPs)}, see Introduction and \alert{Section 4.3}.
+	\begin{figure}[t!]
+		\centering
+		\resizebox{.35\linewidth}{!}{%
+			\input{../thesis_latex/figs/dgp-binary-tree}
+		}
+		\resizebox{.3165\linewidth}{!}{%
+			\input{../thesis_latex/figs/dgp-example-2}
+		}
+		\caption{Two DGP ($L=7$) examples in graph illustration.}
+	\end{figure}
+	The SDE representations of these DGPs are called \alert{SS-DGPs (detailed in Section 4.3).}
+\end{frame}
+
+\begin{frame}{SS-DGPs}
+		Important properties of SS-DGPs:
+		\begin{itemize}
+			\item The SDEs of SS-DGPs are mostly well defined (solution existence and uniqueness). See \alert{Theorem~4.10}.
+			\item Due to their hierarchical structure, simulation of SS-DGPs have an ad-hoc discretisation method (convergence not analysed). See \alert{Algorithm 4.13, LCD}. 
+			\item[\textcolor{red}{$\blacktriangleright$}] SS-DGPs are \alert{Markov} processes. Regression (i.e., smoothing problem) can be solved efficiently in \alert{linear} time. See \alert{Section 4.7}.
+			\item Identifiability problem. See \alert{Section 4.8}.
+			\item Convergence of infinite collection as $L\to\infty$ (not analysed).
+			\item ``Sensitivity'' to the parameters in the leaf nodes as a function of $L$ (not analysed). Imagine \resizebox{.3\linewidth}{!}{%
+				\input{figs/path-graph}
+			}
+			\item ...
+		\end{itemize}
+\end{frame}
+
+\begin{frame}{SS-DGPs}
+	\begin{figure}
+		\centering
+		\begin{minipage}[c]{.65\linewidth}
+			\includegraphics[width=\linewidth]{../thesis_latex/figs/samples_ssdgp_m32}
+		\end{minipage}
+		\begin{minipage}[c]{.32\linewidth}
+			\caption{SS-DGP samples.}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{SS-DGPs}
+	\begin{figure}
+		\begin{minipage}[c]{.62\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{../thesis_latex/figs/ssdgp-reg-rect}
+		\end{minipage}
+		\begin{minipage}[c]{.37\linewidth}
+			\caption{SS-DGP regression.}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{}
+	\begin{figure}
+		\centering
+		\begin{minipage}[c]{.62\linewidth}
+			\includegraphics[width=\linewidth]{../thesis_latex/figs/gravit-wave-ssdgp}
+		\end{minipage}
+		\begin{minipage}[c]{.37\linewidth}
+			\caption{Modelling gravitational wave with an SS-DGP.}
+		\end{minipage}
+	\end{figure}
+\end{frame}
+
+%\begin{frame}{SS-DGPs}
+%	\begin{block}{}
+%		However, there is an \alert{identifiability issue} if you solve SS-DGP regression using \alert{Gaussian filters and smoothers}. 
+%	\end{block}
+%	\begin{block}{}
+%		For instance, suppose that 
+%		%
+%		\begin{equation}
+%			\begin{split}
+%				U(t) &\sim \GP(0, C(t, t'; \ell, \sigma)),\\
+%				Y_k &= H \, U(t_k) + \xi_k,\\
+%				g^{-1}(\sigma(t)) &\sim \GP(0, C_2(t, t')),\\
+%				g &\colon \R\to\R_{>0},
+%			\end{split}
+%		\end{equation}
+%		%
+%		then it is \alert{hard} for Gaussian filters and smoothers to estimate the posterior distribution of $\sigma$ from data.
+%	\end{block}
+%	\begin{block}{}
+%		The \alert{Kalman gain} for $\sigma$ converges to zero as $k\to\infty$.
+%	\end{block}
+%	\begin{block}{}
+%		These are detailed in \alert{Section 4.8}.
+%	\end{block}
+%\end{frame}
+
+\section{Applications of state-space (deep) Gaussian processes}
+\begin{frame}{Contents}
+	\begin{block}{}
+		\tableofcontents[currentsection]
+	\end{block}
+\end{frame}
+
+\begin{frame}{Probabilistic Drift Estimation}
+	\begin{block}{}
+		Consider an SDE
+		%
+		\begin{equation}
+			\diff X(t) = a(X(t)) \diff t + b \diff W(t), \quad X(t_0) = X_0,
+		\end{equation}
+		%
+		where the drift function $a$ is \alert{unknown}. The task is to estimate $a$ from a set of partial observations \alert{$x(t_1), x(t_2), \ldots, x(t_T)$} of the SDE.
+	\end{block}
+	\begin{block}{}
+		One can assume that
+		%
+		\begin{equation}
+			a(x) \sim \mathrm{SSGP}(0, C(x, x'))
+		\end{equation}
+		%
+		then build an \alert{approximate likelihood} model from any \alert{discretisation} of the SDE.
+	\end{block}
+	\begin{block}{}
+		If necessary, let $a$ follow an SS-DGP.
+	\end{block}
+\end{frame}
+
+\begin{frame}{Probabilistic Drift Estimation}
+	\begin{block}{}
+		Essentially, the estimation model reads
+		%
+		\begin{equation}
+			\begin{split}
+				a(x) &\sim \mathrm{SSGP}(0, C(x, x')),\\
+				X(t_k) - X(t_{k-1}) &\approx f_{k-1}(X_{k-1}) + q_{k-1}(X_{k-1}),
+			\end{split}
+		\end{equation}
+		%
+		where $f_{k-1}$ and $q_{k-1}$ are some \alert{non-linear functions and random variables} of $a$ and its \alert{derivatives} (depending on the discretisation).
+	\end{block}
+	\begin{block}{}
+		What are the \alert{upsides} for placing an SS-(D)GP prior on $a$?
+		\begin{itemize}
+			\item \alert{Linear} time computational complexity.
+			\item Derivatives of $a$ appear as \alert{state components}, no need to compute the covariance matrices of derivatives.
+			\item Amenable to \alert{high-order discretisation schemes/accurate likelihood approxiamation}.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+%\begin{frame}{}
+%	\begin{figure}
+%		\centering
+%		\includegraphics[width=\linewidth]{../thesis_latex/figs/drift-est}
+%		\caption{Left: $a(x) = 3 \, (x-x^3)$. Right: $a(x) = \tanh(x)$.}
+%	\end{figure}
+%\end{frame}
+
+\begin{frame}{Spectro-temporal Analysis}
+	\begin{block}{}
+		Consider any periodic signal $z\colon\T\to\R$. We may want to approximate it by \alert{Fourier expansion}:
+		%
+		\begin{equation}
+			z(t) \approx \alpha_0 + \sum^N_{n=1} \big[ \alpha_n \cos(2 \, \pi \, f_n \, t) + \beta_n\sin(2 \, \pi \, f_n \, t) \big].
+		\end{equation}
+		%
+		\alert{GP estimation} of the coefficients \alert{$\lbrace \alpha_0, \alpha_n,\beta_n \rbrace_{n=1}^N$}:
+		%
+		\begin{equation}
+		\begin{split}
+		\alpha_0(t) &\sim \mathrm{SSGP}(0, C^0_\alpha(t, t')), \\
+		\alpha_n(t) &\sim \mathrm{SSGP}(0, C^n_\alpha(t, t')), \\
+		\beta_n(t) &\sim \mathrm{SSGP}(0, C^n_\beta(t, t')), \\
+		Y_k \alert{=} \alpha_0(t_k) + \sum^N_{n=1} \big[ \alpha_n(t_k) &\cos(2 \, \pi \, f_n \, t_k) + \beta_n(t_k)\sin(2 \, \pi \, f_n \, t_k) \big] + \xi_k,\nonumber
+		\end{split}
+		\end{equation}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Spectro-temporal Analysis}
+	\begin{block}{}
+		However, the approach is \alert{computationally demanding}. Needs to store and compute \alert{$2 \, N+1$} covariance matrices of dimension \alert{$T\times T$} and their \alert{inverse}.
+	\end{block}
+	\begin{block}{}
+		If we use the state-space approach, then it reduces to solve \alert{$T$} covariance matrices of dimension \alert{$2 \, N+1$}. Beneficial when \alert{$T\gg N$}.
+	\end{block}
+	\begin{block}{}
+		With a clever choice of \alert{stationary} state-space prior, the said covariance matrices are no longer a problem. Replaced by a \alert{pre-computed and data-independent} stationary covariance matrix. Even faster.
+	\end{block}
+	\begin{block}{}
+		Detailed in \alert{Section 5.2}.
+	\end{block}
+\end{frame}
+
+%\begin{frame}{}
+%	\begin{figure}
+%		\centering
+%		\includegraphics[width=\linewidth]{../thesis_latex/figs/spectro-temporal-demo1}
+%		\caption{Spectrogram (right, contour plot) of a sinusoidal signal (left) estimated by RTS smoother. Dashed black lines stand for the ground truth frequencies.}
+%	\end{figure}
+%\end{frame}
+
+\begin{frame}
+	\noindent
+	\begin{minipage}{.48\textwidth}
+		\begin{figure}
+			\centering
+			\fbox{\includegraphics[trim={2cm 2cm 2cm 2cm},width=.8\linewidth,clip]{../thesis_latex/title-pages/title-pages}}
+		\end{figure}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{.48\textwidth}
+		\begin{block}{}
+			Thank you!
+		\end{block}
+		\begin{block}{}
+			\begin{figure}
+				\centering
+				\includegraphics[width=.5\linewidth]{figs/qr-code-thesis}
+			\end{figure}
+		\end{block}
+	\end{minipage}
 \end{frame}
 
 \end{document}

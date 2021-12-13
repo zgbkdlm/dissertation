@@ -1,7 +1,3 @@
-% Zheng Zhao 2021
-% License: Creativice Commons Attribution 4.0 International (CC BY 4.0)
-%
-
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{zz}[2020/10/11 Zheng Zhao's minimalism beamer class]
 
@@ -19,7 +15,7 @@
 \newcommand{\setcmapBeijing}{%
 	\definecolor{frametitlecolor}{gray}{0.2}
 	\definecolor{mastercolour}{named}{RoyalPurple}
-	\definecolor{secondcolour}{RGB}{66, 140, 212}
+	\definecolor{secondcolour}{RGB}{255, 121, 19}
 }
 \newcommand{\setcmapHelsinki}{%
 	\definecolor{frametitlecolor}{gray}{0.2}
@@ -71,6 +67,7 @@
 \newcommand{\footertext}{~}
 \fi
 \setbeamertemplate{footline}{%
+	\noindent
 	\begin{minipage}{.45\paperwidth}
 		\vspace{-0.5cm}
 		\hspace{\beamer@leftmargin}
@@ -99,16 +96,13 @@
 
 % Fonts
 \ifseriffont
-	\usefonttheme{structuresmallcapsserif}
+%	\usefonttheme{structuresmallcapsserif}
 	\usefonttheme{serif}
 \fi
-%\setbeamerfont{frametitle}{series=\rmfamily}
+\setbeamerfont{section title}{size=\normalsize,series=\bfseries}
+\setbeamerfont{frametitle}{series=\bfseries, shape=\scshape, family=\rmfamily}
 %\setbeamerfont{framesubtitle}{series=\rmfamily}
-%\setbeamerfont{title}{series=\rmfamily}
 %\setbeamerfont{caption}{series=\rmfamily}
-%\setbeamerfont{author}{series=\rmfamily}
-%\setbeamerfont{institute}{series=\rmfamily}
-%\setbeamerfont{date}{series=\rmfamily}
 %\AtBeginDocument{\rmfamily}
 
 % Colours
