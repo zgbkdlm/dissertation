@@ -58,7 +58,7 @@ There are many approaches to construct diffusion processes (with desired drift a
 	\begin{equation}
 		\begin{split}
 			\A \phi(x) &= \sum^d_{i=1} a_{i}(x) \, \tash{\phi}{x_i}(x) + \frac{1}{2} \sum_{i,j=1}^d \Gamma_{ij}(x) \, \frac{\partial^2 \phi}{\partial x_i \, \partial x_j}(x)\\
-			&\coloneqq (\nabla_x \phi(x))^\trans \, a(x) + \frac{1}{2} \trace*{\Gamma(x) \, \hessian_x \phi(x)}
+			&\coloneqq (\nabla_x \phi(x))^\trans \, a(x) + \frac{1}{2} \tracebig{\Gamma(x) \, \hessian_x \phi(x)}
 			\label{equ:generator-ito}
 		\end{split}
 	\end{equation}
@@ -297,7 +297,7 @@ The approximation $\Sigma_M$ has an important property that it does not \textit{
 	\begin{equation}
 		\begin{split}
 			\Theta_{r}^{uv} &= \sum^d_{i,j=1} \sum^{r-1}_{k=0} \binom{r-1}{k} \tash{\alpha^u_k}{X_i(s)} \, \tash{\alpha^v_{r-k-1}}{X_j(s)} \, \Gamma_{ij} + \A \Theta_{r-1}^{uv} \\
-			&= \sum^{r-1}_{k=0} \Am^k \sum^{r-k-1}_{l=0} \binom{r-k-1}{l} \trace*{\nabla_X \alpha^v_{r-k-l-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma}
+			&= \sum^{r-1}_{k=0} \Am^k \sum^{r-k-1}_{l=0} \binom{r-k-1}{l} \tracebigg{\nabla_X \alpha^v_{r-k-l-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma}
 		\end{split}
 		\label{equ:tme-homo-theta}
 	\end{equation}
@@ -357,7 +357,7 @@ The approximation $\Sigma_M$ has an important property that it does not \textit{
 		\begin{split}
 			\Theta^{uv}_{r} &= \beta^{uv}_r - \sum^r_{k=0}\binom{r}{k} \alpha^u_k \, \alpha^v_{r-k} \\
 			&= \sum^d_{i,j=1} \sum^{r-1}_{k=0} \binom{r-1}{k} \tash{\alpha^u_k}{X_i(s)} \, \tash{\alpha^v_{r-k-1}}{X_j(s)} \, \Gamma_{ij} + \A \Theta_{r-1}^{uv} \\
-			&= \sum^{r-1}_{k=0} \binom{r-1}{k} \trace*{\nabla_X \alpha^v_{r-k-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma} + \A \Theta_{r-1}^{uv}.
+			&= \sum^{r-1}_{k=0} \binom{r-1}{k} \tracebigg{\nabla_X \alpha^v_{r-k-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma} + \A \Theta_{r-1}^{uv}.
 			\nonumber
 		\end{split}
 	\end{equation}
@@ -556,7 +556,7 @@ We use the following assumptions.
 
 \begin{assumption}
 	\label{assump:tme-stability-sys}
-	There exist constants $c_M \geq 0$, $c_{\check{q}} \geq 0$, and $c_P \geq 0$ such that $\sup_{k\geq 1} \norm{R_M(X_{k-1})}_2 \leq c_M$ $\PP$-almost surely, $\sup_{k\geq 1} \expec*{\trace*{\check{Q}(X_{k-1})}} \leq c_{\check{q}}$, and $\sup_{k\geq 1} \expecbig{\trace{P^f_k}} \leq c_P$.
+	There exist constants $c_M \geq 0$, $c_{\check{q}} \geq 0$, and $c_P \geq 0$ such that $\sup_{k\geq 1} \norm{R_M(X_{k-1})}_2 \leq c_M$ $\PP$-almost surely, $\sup_{k\geq 1} \expecbig{\tracebig{\check{Q}(X_{k-1})}} \leq c_{\check{q}}$, and $\sup_{k\geq 1} \expecbig{\trace{P^f_k}} \leq c_P$.
 \end{assumption}
 
 \begin{assumption}

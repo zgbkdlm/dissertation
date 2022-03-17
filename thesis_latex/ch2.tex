@@ -302,8 +302,8 @@ where $q_{k-1} \sim \mathrm{N}(0, Q_{k-1})$. The coefficients $F_{k-1} \in \R^{d
 %
 \begin{equation}
 	\begin{split}
-		F_{k-1} &= e^{(t_k - t_{k-1}) \, A}, \\
-		Q_{k-1} &= \int^{t_k}_{t_{k-1}} e^{(t_{k} - s) \, A} \,B \, B^\trans \, \big(e^{(t_{k} - s) \, A}\big)^\trans \diff s.
+		F_{k-1} &= \expp^{(t_k - t_{k-1}) \, A}, \\
+		Q_{k-1} &= \int^{t_k}_{t_{k-1}} \expp^{(t_{k} - s) \, A} \,B \, B^\trans \, \big(\expp^{(t_{k} - s) \, A}\big)^\trans \diff s.
 	\end{split}
 	\label{equ:disc-coeff-exp}
 \end{equation}
