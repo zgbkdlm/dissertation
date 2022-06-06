@@ -58,7 +58,7 @@ There are many approaches to construct diffusion processes (with desired drift a
 	\begin{equation}
 		\begin{split}
 			\A \phi(x) &= \sum^d_{i=1} a_{i}(x) \, \tash{\phi}{x_i}(x) + \frac{1}{2} \sum_{i,j=1}^d \Gamma_{ij}(x) \, \frac{\partial^2 \phi}{\partial x_i \, \partial x_j}(x)\\
-			&\coloneqq (\nabla_x \phi(x))^\trans \, a(x) + \frac{1}{2} \trace*{\Gamma(x) \, \hessian_x \phi(x)}
+			&\coloneqq (\nabla_x \phi(x))^\trans \, a(x) + \frac{1}{2} \tracebig{\Gamma(x) \, \hessian_x \phi(x)}
 			\label{equ:generator-ito}
 		\end{split}
 	\end{equation}
@@ -116,7 +116,7 @@ centred at time $s,$ where $\Delta t \coloneqq t - s$, and $M$ is the expansion 
 %
 	\begin{equation}
 		\begin{split}
-			\phi(X(t)) &= \phi(X(s)) + \int^t_s (\nabla_X \phi)^\trans\, a(X(\tau)) + \frac{1}{2}\trace*{\Gamma(X(\tau)) \, \hessian_X\phi} \diff \tau \\
+			\phi(X(t)) &= \phi(X(s)) + \int^t_s (\nabla_X \phi)^\trans\, a(X(\tau)) + \frac{1}{2}\tracebig{\Gamma(X(\tau)) \, \hessian_X\phi} \diff \tau \\
 			&\quad+ \int^t_s b(X(\tau)) \diff W(\tau).
 			\label{equ:tme-derivation-1}
 		\end{split}
@@ -297,7 +297,7 @@ The approximation $\Sigma_M$ has an important property that it does not \textit{
 	\begin{equation}
 		\begin{split}
 			\Theta_{r}^{uv} &= \sum^d_{i,j=1} \sum^{r-1}_{k=0} \binom{r-1}{k} \tash{\alpha^u_k}{X_i(s)} \, \tash{\alpha^v_{r-k-1}}{X_j(s)} \, \Gamma_{ij} + \A \Theta_{r-1}^{uv} \\
-			&= \sum^{r-1}_{k=0} \Am^k \sum^{r-k-1}_{l=0} \binom{r-k-1}{l} \trace*{\nabla_X \alpha^v_{r-k-l-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma}
+			&= \sum^{r-1}_{k=0} \Am^k \sum^{r-k-1}_{l=0} \binom{r-k-1}{l} \tracebigg{\nabla_X \alpha^v_{r-k-l-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma}
 		\end{split}
 		\label{equ:tme-homo-theta}
 	\end{equation}
@@ -357,7 +357,7 @@ The approximation $\Sigma_M$ has an important property that it does not \textit{
 		\begin{split}
 			\Theta^{uv}_{r} &= \beta^{uv}_r - \sum^r_{k=0}\binom{r}{k} \alpha^u_k \, \alpha^v_{r-k} \\
 			&= \sum^d_{i,j=1} \sum^{r-1}_{k=0} \binom{r-1}{k} \tash{\alpha^u_k}{X_i(s)} \, \tash{\alpha^v_{r-k-1}}{X_j(s)} \, \Gamma_{ij} + \A \Theta_{r-1}^{uv} \\
-			&= \sum^{r-1}_{k=0} \binom{r-1}{k} \trace*{\nabla_X \alpha^v_{r-k-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma} + \A \Theta_{r-1}^{uv}.
+			&= \sum^{r-1}_{k=0} \binom{r-1}{k} \tracebigg{\nabla_X \alpha^v_{r-k-1} \, \big(\nabla_X \alpha^u_k\big)^\trans \, \Gamma} + \A \Theta_{r-1}^{uv}.
 			\nonumber
 		\end{split}
 	\end{equation}
@@ -415,21 +415,21 @@ In the next example, we show how to use Theorem~\ref{thm:tme-cov-pd} and Corolla
 	Consider a two-dimensional SDE
 	\begin{equation}
 		\begin{split}
-			\diff X^1(t) &= (\log(1 + \exp(X^1(t))) + \kappa \, X^2(t)) \diff t + \diff W_1(t), \\
-			\diff X^2(t) &= (\log(1 + \exp(X^2(t))) + \kappa \, X^1(t)) \diff t + \diff W_2(t), 
+			\diff X^1(t) &= \bigl(\log(1 + \exp(X^1(t))) + \kappa \, X^2(t)\bigr) \diff t + \diff W_1(t), \\
+			\diff X^2(t) &= \bigl(\log(1 + \exp(X^2(t))) + \kappa \, X^1(t)\bigr) \diff t + \diff W_2(t), 
 		\end{split}
 	\end{equation}
 	where $\kappa \in \R$ is a tunable parameter. We want to ensure the positive definiteness of $\Sigma_2(\Delta t)$ for all $\Delta t \in \R_{>0}$ by tuning $\kappa$. In order to do so, we can first explicitly derive $\Theta_1$ and $\Theta_2$. It turns out that $\Theta_1$ is an identity matrix and
 	\begin{equation}
 		\Theta_2 = 2\,
 		\begin{bmatrix}
-			\frac{e^{X^1(t_0)}}{e^{X^1(t_0)}+1} & \kappa \\
-			\kappa & \frac{e^{X^2(t_0)}}{e^{X^2(t_0)}+1}
+			\frac{\expp^{X^1(t_0)}}{\expp^{X^1(t_0)}+1} & \kappa \\
+			\kappa & \frac{\expp^{X^2(t_0)}}{\expp^{X^2(t_0)}+1}
 		\end{bmatrix}.
 	\end{equation}
 	Then, by Corollary~\ref{corol-tme-pd-all-dt} it is sufficient to guarantee the positive definiteness of $\Sigma_2(\Delta t)$ for all $\Delta t\in\R_{>0}$ by ensuring that $\Theta_2$ is positive semi-definite. Thus, one should let 
 	\begin{equation}
-		\abs{\kappa} \leq \sqrt{\frac{e^{X^1(t_0) + X^2(t_0)}}{(e^{X^1(t_0)}+1) \, (e^{X^2(t_0)}+1)}} \nonumber.
+		\abs{\kappa} \leq \sqrt{\frac{\expp^{X^1(t_0) + X^2(t_0)}}{(\expp^{X^1(t_0)}+1) \, (\expp^{X^2(t_0)}+1)}} \nonumber.
 	\end{equation}
 	Figure~\ref{fig:tme-softplus} plots the minimum eigenvalues of $\Sigma_2(\Delta t)$ with respect to $\Delta t$ and $\kappa$ when $X^1(t_0)=X^2(t_0)=0$. In this case, $\abs{\kappa}$ should be less than $0.5$ (red dashed lines in the figure) in order to guarantee the positive definiteness of $\Sigma_2(\Delta t)$. The figure shows that $\Sigma_2(\Delta t)$ is indeed positive definite for all $\Delta t\in\R_{>0}$ within the region $\abs{\kappa}\leq 0.5$, and that this sufficient region is very close to the true region (i.e., the region of $\kappa$ that $\lambda_\mathrm{min}(\Sigma_2(\Delta t))>0$ for all $\Delta t$).
 \end{example}
@@ -544,7 +544,7 @@ In the following, sigma-point approximations of Gaussian integrals of the form $
 We show the stability of sigma-point TME Gaussian filters in the sense that 
 %
 \begin{equation}
-	\sup_{k\geq 1}  \expec*{\normbig{X_k - m^f_k}^2_2} < \infty.
+	\sup_{k\geq 1}  \expecbigg{\normbig{X_k - m^f_k}^2_2} < \infty.
 	\label{equ:tme-stability-aim}
 \end{equation}
 %
@@ -556,7 +556,7 @@ We use the following assumptions.
 
 \begin{assumption}
 	\label{assump:tme-stability-sys}
-	There exist constants $c_M \geq 0$, $c_{\check{q}} \geq 0$, and $c_P \geq 0$ such that $\sup_{k\geq 1} \norm{R_M(X_{k-1})}_2 \leq c_M$ $\PP$-almost surely, $\sup_{k\geq 1} \expec*{\trace*{\check{Q}(X_{k-1})}} \leq c_{\check{q}}$, and $\sup_{k\geq 1} \expecbig{\trace{P^f_k}} \leq c_P$.
+	There exist constants $c_M \geq 0$, $c_{\check{q}} \geq 0$, and $c_P \geq 0$ such that $\sup_{k\geq 1} \norm{R_M(X_{k-1})}_2 \leq c_M$ $\PP$-almost surely, $\sup_{k\geq 1} \expecbig{\tracebig{\check{Q}(X_{k-1})}} \leq c_{\check{q}}$, and $\sup_{k\geq 1} \expecbig{\trace{P^f_k}} \leq c_P$.
 \end{assumption}
 
 \begin{assumption}
@@ -589,7 +589,7 @@ The main result is shown in the following theorem.
 	%
 	\begin{equation}
 		\begin{split}
-			\expec*{\normbig{X_k - m^f_k}^2_2} &\leq \big(4\, c_f^2\big)^k \trace{P_0}  \\
+			\expecbigg{\normbig{X_k - m^f_k}^2_2} &\leq \big(4\, c_f^2\big)^k \trace{P_0}  \\
 			&\quad+ \frac{4 \, \big( c_K^2 \,\big(c_\mathcal{S} \, c_P + c_M^2 + c_{\check{q}}\big) + \trace{R}  \, c_P^2 \, \norm{H}_2^2 \, \norm{R^{-1}}^2_2 \big)}{1 - 4\, c_f^2}.
 		\end{split}
 		\label{equ:tme-stab-bound}
@@ -611,7 +611,7 @@ The main result is shown in the following theorem.
 	Then 
 	%
 	\begin{align}
-		\expec*{\normbig{X_k - m^f_k}_2^2} &\leq 4 \, \expec*{ \normBig{Z_k \, \Big( f^M(X_{k-1}) - \mathcal{S}_{m^f_{k-1}, P^f_{k-1}}(f^M)\Big)}^2_2 } \label{equ:tme-stab-e}\\
+		\expecbigg{\normbig{X_k - m^f_k}_2^2} &\leq 4 \, \expecBigg{ \normBig{Z_k \, \Big( f^M(X_{k-1}) - \mathcal{S}_{m^f_{k-1}, P^f_{k-1}}(f^M)\Big)}^2_2 } \label{equ:tme-stab-e}\\
 		&\quad+ 4 \, \Big( \expecbig{\norm{Z_k \, R_{M}(X_{k-1})}^2_2} + \expecbig{\norm{Z_k \, \check{q}(X_{k-1})}^2_2} + \expecbig{\norm{K_k \, \xi_k}_2^2} \Big). \nonumber
 	\end{align}
 	%
@@ -619,7 +619,7 @@ The main result is shown in the following theorem.
 	%
 	\begin{equation}
 		\begin{split}
-			\expec*{ \normBig{Z_k \, \Big( f^M(X_{k-1}) - \mathcal{S}_{m^f_{k-1}, P^f_{k-1}}(f^M)\Big)}^2_2 } &\leq c_f^2 \, \expec*{\normbig{X_{k-1} - m^f_{k-1}}_2^2} \\
+			\expecBigg{ \normBig{Z_k \, \Big( f^M(X_{k-1}) - \mathcal{S}_{m^f_{k-1}, P^f_{k-1}}(f^M)\Big)}^2_2 } &\leq c_f^2 \, \expecbigg{\normbig{X_{k-1} - m^f_{k-1}}_2^2} \\
 			&\quad+ c_K^2 \, c_\mathcal{S} \, c_P, \\
 			\expecbig{\norm{Z_k \, R_{M}(X_{k-1})}^2_2} &\leq c_K^2 \, c_M^2, \\
 			\expecbig{\norm{Z_k \, \check{q}(X_{k-1})}^2_2} &\leq c_K^2 \, c_{\check{q}}, \\
@@ -631,7 +631,7 @@ The main result is shown in the following theorem.
 	%
 	\begin{equation}
 		\begin{split}
-			\expec*{\normbig{X_k - m^f_k}_2^2} &\leq 4 \, c_f^2 \, \expec*{\normbig{X_{k-1} - m^f_{k-1}}_2^2} \\
+			\expecbigg{\normbig{X_k - m^f_k}_2^2} &\leq 4 \, c_f^2 \, \expecbigg{\normbig{X_{k-1} - m^f_{k-1}}_2^2} \\
 			&\quad+ 4 \, \big( c_K^2 \,\big(c_\mathcal{S} \, c_P + c_M^2 + c_{\check{q}}\big) + \trace{R}  \, c_P^2 \, \norm{H}_2^2 \, \norm{R^{-1}}^2_2 \big).
 		\end{split}
 	\end{equation}
@@ -714,7 +714,7 @@ This section presents a few applications of TME Gaussian filters and smoothers o
 			\begin{bmatrix}
 				\sqrt{(Z^x(t_k))^2 + (Z^y(t_k))^2 + (Z^z(t_k))^2} \\
 				\arctan(Z^y(t_k) \, / \, Z^x(t_k)) \\
-				\arctan\big(Z^z(t_k) \, / \, \sqrt{(Z^x(t_k))^2 + (Z^y(t_k))^2}\big)
+				\arctan\bigl(Z^z(t_k) \, / \, \sqrt{(Z^x(t_k))^2 + (Z^y(t_k))^2}\bigr)
 			\end{bmatrix}.
 		\end{split}
 	\end{equation}

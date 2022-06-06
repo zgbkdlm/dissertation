@@ -51,7 +51,7 @@ where $m \colon \T \to\R^d$ and $C\colon \T \times \T \to\R^{d \times d}$ stand 
 There are numerous possible choices for the covariance function $C$, and researchers and practitioners can choose one or the other depending on their applications. One of the most popular family of covariance functions to model continuous functions with varying degrees of regularity is given by the Whittle--Mat\'{e}rn covariance function~\citep{Matern1960}
 %
 \begin{equation}
-	C_{\mathrm{Mat.}}(t, t') = \frac{\sigma^2 \, 2^{1-\nu}}{\varGamma(\nu)} \, \Bigg(\frac{\sqrt{2 \, \nu} \, \abs{t - t'}}{\ell}\Bigg)^\nu \, \mBesselsec \Bigg(\frac{\sqrt{2 \, \nu} \, \abs{t - t'}}{\ell}\Bigg),
+	C_{\mathrm{Mat.}}(t, t') = \frac{\sigma^2 \, 2^{1-\nu}}{\varGamma(\nu)} \, \Bigg(\frac{\sqrt{2 \, \nu} \, \abs{t - t'}}{\ell}\Bigg)^\nu \, \mBesselsec \Biggl(\frac{\sqrt{2 \, \nu} \, \abs{t - t'}}{\ell}\Biggr),
 	\label{equ:cov-matern}
 \end{equation}
 %
@@ -160,8 +160,8 @@ is a zero-mean stationary GP, and its covariance function is given by
 \begin{equation}
 	\cov{{U}(t), {U}(t')} = 
 	\begin{cases}
-		P_0 \, e^{\abs{t-t'} \, A^\trans}, & t < t' \in \T, \\
-		e^{\abs{t-t'} \, A} \, P_0, & t' \leq t \in \T.
+		P_0 \, \expp^{\abs{t-t'} \, A^\trans}, & t < t' \in \T, \\
+		\expp^{\abs{t-t'} \, A} \, P_0, & t' \leq t \in \T.
 	\end{cases} \nonumber
 \end{equation}
 See, for example, \citet[][Theorem 6.7]{Karatzas1991}, \citet[][Section 3.7]{Pavliotis2014}, or~\citet[][Section 6.5]{Sarkka2019} for details.
@@ -331,7 +331,7 @@ In order for the DGP $V$ represented by Equation~\eqref{equ:batch-dgp} to be wel
 \begin{equation}
 	\begin{split}
 		&C_{\mathrm{NS}}(t, t'; \ell, \sigma) \\
-		&= \frac{\sigma(t) \, \sigma(t') \big(\ell(t) \, \ell(t')\big)^{\frac{1}{4}} \, \sqrt{2}}{\varGamma(\nu) \, 2^{\nu-1} \, \sqrt{\ell(t) + \ell(t')}} \left(\sqrt{\frac{8 \, \nu \, (t-t')^2}{\ell(t) + \ell(t')}}\right)^{\!\!\nu} \mBesselsec\!\!\left(\sqrt{\frac{8 \, \nu \, (t-t')^2}{\ell(t) + \ell(t')}}\right),
+		&= \frac{\sigma(t) \, \sigma(t') \big(\ell(t) \, \ell(t')\big)^{\frac{1}{4}} \, \sqrt{2}}{\varGamma(\nu) \, 2^{\nu-1} \, \sqrt{\ell(t) + \ell(t')}} \left(\sqrt{\frac{8 \, \nu \, (t-t')^2}{\ell(t) + \ell(t')}}\right)^{\!\!\nu} \mBesselsec\!\left(\sqrt{\frac{8 \, \nu \, (t-t')^2}{\ell(t) + \ell(t')}}\right),
 		\label{equ:cov-ns-matern}
 	\end{split}
 \end{equation}
@@ -578,7 +578,7 @@ where $\kappa = \sqrt{2 \, \nu} \, / \, \ell$. Furthermore, suppose that the ini
 Based on the aforementioned \matern SDE representation, we can now construct \matern SS-DGPs by choosing their coefficients $A^i$ and $B^i$ for $i=1,\ldots,L$, as per Equation~\eqref{equ:matern-sde-coeffs}. As an example, suppose that the $i$-th GP element $U^i_{j_i}\in\R^{\gamma}$ in Equation~\eqref{equ:ss-dgps-sde-split} has two parents $U^m_{i}\colon \T\to\R^{d_m}$ and $U^n_{i}\colon \T\to\R^{d_n}$, that encode the length scale and the magnitude parameters, respectively. Then, we can select two suitable transformation functions $g_m \colon \R^{d_m} \to \R_{>0}$ and $g_n \colon \R^{d_n} \to \R_{>0}$, and let 
 %
 \begin{equation}
-	\ell_i(t) = g_m\big( U^m_{i}(t) \big)
+	\ell_i(t) = g_m\bigl( U^m_{i}(t) \bigr)
 	\label{equ:ss-dgp-ell}
 \end{equation}
 %
@@ -816,17 +816,17 @@ Assumption~\ref{assump:ssdgp-ident-neg} is the key assumption to have the prior 
 	By It\^{o}'s formula and the law of total expectation, one can find that 
 	%
 	\begin{align}
-		\covbig{U^1_0(t), U^2_1(t)} &= \expecBig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)} e^{\int^t_{t_0} A^1( \psi(s)) + A^2( \varphi(s)) \diff s}} \nonumber\\
-		&\quad-\expecBig{\expecbig{U^1_0(t_0) \cond \psi(t_0)} e^{\int^t_{t_0} A^1( \psi(s)) \diff s }} \label{equ:vanish-cov-eq1}\\
-		&\qquad\times\expecBig{\expecbig{U^2_1(t_0) \cond \varphi(t_0)} e^{\int^t_{t_0} A^2( \varphi(s)) \diff s }}.\nonumber
+		\covbig{U^1_0(t), U^2_1(t)} &= \expecBig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)} \expp^{\int^t_{t_0} A^1( \psi(s)) + A^2( \varphi(s)) \diff s}} \nonumber\\
+		&\quad-\expecBig{\expecbig{U^1_0(t_0) \cond \psi(t_0)} \expp^{\int^t_{t_0} A^1( \psi(s)) \diff s }} \label{equ:vanish-cov-eq1}\\
+		&\qquad\times\expecBig{\expecbig{U^2_1(t_0) \cond \varphi(t_0)} \expp^{\int^t_{t_0} A^2( \varphi(s)) \diff s }}.\nonumber
 	\end{align}
 	%
 	Next, knowing that $A^1 \circ \psi$ and $A^2 \circ \varphi$ are upper bounded by Assumption~\ref{assump:ssdgp-ident-neg}, we can then apply the triangle inequality and conditional Jensen's inequality~\citep[][Theorem 8.20]{AchimKlenke2014} to bound the three terms in the equation above. As an example, the first term admits
 	%
 	\begin{equation}
-		\begin{split} &\absBig{\expecBig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)} \, e^{\int^t_{t_0} A^1( \psi(s)) + A^2(\varphi(s)) \diff s }}}\\
-		&\leq \expecBig{\absbig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)}} \, \absbig{e^{\int^t_{t_0} A^1( \psi(s)) + A^2(\varphi(s)) \diff s }}} \\
-		&\leq \expecBig{\absbig{U^1_0(t_0) \, U^2_1(t_0) }} \, e^{(c_{A^1} + c_{A^2}) \, (t - t_0)}.
+		\begin{split} &\absBig{\expecBig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)} \, \expp^{\int^t_{t_0} A^1( \psi(s)) + A^2(\varphi(s)) \diff s }}}\\
+		&\leq \expecBig{\absbig{\expecbig{U^1_0(t_0) \, U^2_1(t_0) \cond \psi(t_0), \varphi(t_0)}} \, \absbig{\expp^{\int^t_{t_0} A^1( \psi(s)) + A^2(\varphi(s)) \diff s }}} \\
+		&\leq \expecBig{\absbig{U^1_0(t_0) \, U^2_1(t_0) }} \, \expp^{(c_{A^1} + c_{A^2}) \, (t - t_0)}.
 		%&\leq \sqrt{\expecbig{\big(U^1_0(t_0) \big)^2} \, \expecbig{\big(U^2_1(t_0) \big)^2}} \, e^{(c_{A^1} + c_{A^2}) \, (t - t_0)},
 		\label{equ:ssdgp-identi-lemma-cov-ineq}
 		\end{split}
@@ -871,7 +871,7 @@ Assumption~\ref{assump:ssdgp-ident-neg} is the key assumption to have the prior 
 	%
 	where 
 	\begin{equation}
-		z(t) = \exp \Bigg\lbrace\int^t_{t_0} 2 \, \zeta_\epsilon \,\sqrt{\expecbig{\big( A^1(\psi(s))\,U^1_0(s) \big)^2}} \diff s\Bigg\rbrace. \nonumber
+		z(t) = \exp \Biggl\lbrace\int^t_{t_0} 2 \, \zeta_\epsilon \,\sqrt{\expecbig{\big( A^1(\psi(s))\,U^1_0(s) \big)^2}} \diff s\Biggr\rbrace. \nonumber
 	\end{equation}
 \end{lemma}
 \begin{proof}
@@ -888,7 +888,7 @@ Assumption~\ref{assump:ssdgp-ident-neg} is the key assumption to have the prior 
 	Under Assumptions~\ref{assump:ssdgp-ident-solution} and~\ref{assump:ssdgp-ident-bound-A-B}, there exists an $\epsilon >0$ such that
 	%
 	\begin{equation}
-		\varrbig{U^1_0(t)} \geq \frac{(c_B - 2 \, \epsilon \, \sqrt{c_A}) \, (t - t_0)}{\exp\big(2 \, \zeta_\epsilon \, \sqrt{c_A} \, (t-t_0)\big)} > 0,
+		\varrbig{U^1_0(t)} \geq \frac{(c_B - 2 \, \epsilon \, \sqrt{c_A}) \, (t - t_0)}{\exp\bigl(2 \, \zeta_\epsilon \, \sqrt{c_A} \, (t-t_0)\bigr)} > 0,
 	\end{equation}
 	%
 	for all $t\in\T$.
@@ -1001,8 +1001,8 @@ We consider a maximum a posterior (MAP) approach for solving Equation~\eqref{equ
 %
 \begin{align}
 	\mathcal{L}^{\mathrm{B}} &\coloneqq \mathcal{L}^{\mathrm{B}}(v_{1:T}) \coloneqq \mathcal{L}^{\mathrm{B}}(u^1_{0, 1:T}, u^2_{1, 1:T}, u^3_{1, 1:T}) \nonumber\\
-	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\big(2 \, \pi \, C^1_{1:T}\big) \label{equ:r-dgp-batch-obj}\\
-	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\big(2 \, \pi \, C^2_{1:T}\big) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\big(2 \, \pi \, C^3_{1:T}\big)\nonumber,
+	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^1_{1:T}\bigr) \label{equ:r-dgp-batch-obj}\\
+	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^2_{1:T}\bigr) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^3_{1:T}\bigr)\nonumber,
 \end{align}
 %
 where we omit the factor $1 \, / \, 2$ and let $v_{1:T} \coloneqq \big\lbrace u^1_{0, 1:T}, u^2_{1, 1:T}, u^3_{1, 1:T} \big\rbrace$ for simplicity. In the above Equation~\eqref{equ:r-dgp-batch-obj}, notation $\norm{x}_G = (x \, G^{-1} \, x)^{1 \, / \, 2}$ stands for the $G$-weighted Euclidean norm given a non-singular matrix $G$. We write $C^1_{1:T} \in \R^{T \times T}$ for the matrix obtained by evaluating the covariance function $C^1$ on the Cartesian grid $(t_1, \ldots, t_T) \times (t_1, \ldots, t_T)$, and similarly for $C^2_{1:T}$ and $C^3_{1:T}$. The noise covariance $\Xi_{1:T}$ is the diagonal matrix of $\Xi_1,\ldots, \Xi_T$. We now introduce the regularisation term 
@@ -1033,8 +1033,8 @@ There are many approaches to solving penalised optimisation problems of the form
 To do so, let us introduce auxiliary variables $\theta_{1:T} \coloneqq \big\lbrace \theta^1_{1:T}, \theta^2_{1:T}, \theta^3_{1:T}\big\rbrace$, where $\theta^1_{1:T}\in\R^T$, $\theta^2_{1:T}\in\R^T$, and $\theta^3_{1:T}\in\R^T$. We rewrite Equation~\eqref{equ:r-dgp-argmin} as an equality constrained problem
 %
 \begin{align}
-	v_{1:T} &= \argmin_{v_{1:T}} \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\big(2 \, \pi \, C^1_{1:T}\big) \nonumber\\
-	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\big(2 \, \pi \, C^2_{1:T}\big) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\big(2 \, \pi \, C^3_{1:T}\big) \nonumber\\
+	v_{1:T} &= \argmin_{v_{1:T}} \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^1_{1:T}\bigr) \nonumber\\
+	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^2_{1:T}\bigr) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^3_{1:T}\bigr) \nonumber\\
 	&\quad+ \lambda_1 \, \normbig{\theta^1_{1:T}}_1 + \lambda_2 \, \normbig{\theta^2_{1:T}}_1 + \lambda_3 \, \normbig{\theta^3_{1:T}}_1 \nonumber\\
 	&\text{subject to } \label{equ:r-dgp-equal-constrained}\\
 	&\quad\theta^1_{1:T}=\Phi^1 \, u^1_{0, 1:T}, \quad \theta^2_{1:T}=\Phi^2 \, u^2_{1, 1:T}, \quad \theta^3_{1:T}=\Phi^3 \, u^3_{1, 1:T}.\nonumber
@@ -1044,8 +1044,8 @@ Then let us introduce multiplier variables $\eta_{1:T} \coloneqq \big\lbrace \et
 %
 \begin{align}
 	&\mathcal{L}^\mathrm{A}(v_{1:T}, \theta_{1:T}, \eta_{1:T}) \nonumber\\
-	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\big(2 \, \pi \, C^1_{1:T}\big) \nonumber\\
-	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\big(2 \, \pi \, C^2_{1:T}\big) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\big(2 \, \pi \, C^3_{1:T}\big) \nonumber\\
+	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^1_{1:T}\bigr) \nonumber\\
+	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^2_{1:T}\bigr) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^3_{1:T}\bigr) \nonumber\\
 	&\quad+ \lambda_1  \, \normbig{\theta^1_{1:T}}_1 + \big(\eta^1_{1:T}\big)^\trans \, \big(\Phi^1 \, u^1_{0,1:T} - \theta^1_{1:T}\big) \label{equ:r-dgp-lag}\\
 	&\quad+ \lambda_2  \, \normbig{\theta^2_{1:T}}_1 + \big(\eta^2_{1:T}\big)^\trans \, \big(\Phi^2 \, u^2_{1,1:T} - \theta^2_{1:T}\big) \nonumber\\
 	&\quad+ \lambda_3  \, \normbig{\theta^3_{1:T}}_1 + \big(\eta^3_{1:T}\big)^\trans \, \big(\Phi^3 \, u^3_{1,1:T} - \theta^3_{1:T}\big) \nonumber\\
@@ -1059,8 +1059,8 @@ where $\rho_1>0$, $\rho_2>0$, and $\rho_3>0$ are penalty parameters. The ADMM me
 	Let $\big\lbrace v^{(0)}_{1:T}, \theta^{(0)}_{1:T}, \eta^{(0)}_{1:T}\big\rbrace$ be a given initial estimate. Then for $i=0,1,\ldots$, the ADMM algorithm updates the estimate by solving the following subproblems iteratively
 	%
 	\begin{align}
-		v^{(i+1)}_{1:T} &= \argmin_{v_{1:T}} \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\big(2 \, \pi \, C^1_{1:T}\big) \nonumber\\
-		&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\big(2 \, \pi \, C^2_{1:T}\big) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\big(2 \, \pi \, C^3_{1:T}\big) \nonumber\\
+		v^{(i+1)}_{1:T} &= \argmin_{v_{1:T}} \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^1_{1:T}\bigr) \nonumber\\
+		&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^2_{1:T}\bigr) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^3_{1:T}\bigr) \nonumber\\
 		&\quad+ \big(\eta^{1, (i)}_{1:T}\big)^\trans \, \big(\Phi^1 \, u^1_{0,1:T} - \theta^{1, (i)}_{1:T}\big) + \frac{\rho_1}{2}  \, \normbig{\Phi^1 \, u^1_{0,1:T} - \theta^{1, (i)}_{1:T}}^2_2 \label{equ:r-dgp-sub-f}\\
 		&\quad+ \big(\eta^{2, (i)}_{1:T}\big)^\trans \, \big(\Phi^2 \, u^2_{1,1:T} - \theta^{2, (i)}_{1:T}\big) + \frac{\rho_2}{2}  \, \normbig{\Phi^2 \, u^2_{1,1:T} - \theta^{2, (i)}_{1:T}}^2_2 \nonumber\\
 		&\quad+ \big(\eta^{3, (i)}_{1:T}\big)^\trans \, \big(\Phi^3 \, u^3_{1,1:T} - \theta^{3, (i)}_{1:T}\big) + \frac{\rho_3}{2} \,  \normbig{\Phi^3 \, u^3_{1,1:T} - \theta^{3, (i)}_{1:T}}^2_2, \nonumber
@@ -1152,7 +1152,7 @@ Consider the state-space representation of the DGP defined in Equation~\eqref{eq
 \begin{equation}
 	\begin{split}
 		\mathcal{L}^\mathrm{S}(v_{1:T}) = v_0^\trans \, P_0^{-1}\,v_0 + \sum^T_{k=1} \Big[ &\norm{y_k - H \, v_k}^2_{\Xi_k} + \norm{v_k - f_{k-1}(v_{k-1})}^2_{Q_{k-1}(v_{k-1})} \\
-		&+ \log \, \det\big(2 \, \pi \, Q_{k-1}(v_{k-1})\big)\Big],
+		&+ \log \, \det\bigl(2 \, \pi \, Q_{k-1}(v_{k-1})\bigr)\Big],
 	\end{split}
 \end{equation}
 %

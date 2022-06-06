@@ -1,8 +1,9 @@
-%!TEX root = dissertation.tex
+%!TEX root = main.tex
 % Generic macro definitions for a number of math operations.
+% Version 2.0, last updated 02.06.2022.
 %
 % To use this macro you need packages: amsmath, amssymb, bm, mathtools
-%
+% 
 % Zheng Zhao @ 2019
 % zz@zabemon.com
 %
@@ -45,6 +46,7 @@
 \DeclareMathOperator*{\sup}{sup\,}  % sup better spacing
 \DeclareMathOperator*{\inf}{inf\,}  % inf
 \DeclareMathOperator*{\lim}{lim\,}  % inf
+\DeclareMathOperator*{\oprepeat}{\cdots}  % repeat operation
 
 \newcommand{\sgn}{\operatorname{sgn}}           % sign function
 
@@ -71,48 +73,48 @@
 % E [ ]
 \newcommand{\expec}{\@ifstar{\@expecauto}{\@expecnoauto}}
 \newcommand{\@expecauto}[1]{\expecsym \left[ #1 \right]}
-\newcommand{\@expecnoauto}[1]{\expecsym \, [#1]}
-\newcommand{\expecbig}[1]{\expecsym \big[ #1 \big]}
-\newcommand{\expecBig}[1]{\expecsym \Big[ #1 \Big]}
-\newcommand{\expecbigg}[1]{\expecsym \bigg[ #1 \bigg]}
-\newcommand{\expecBigg}[1]{\expecsym \Bigg[ #1 \Bigg]}
+\newcommand{\@expecnoauto}[1]{\expecsym [#1]}
+\newcommand{\expecbig}[1]{\expecsym \bigl[ #1 \bigr]}
+\newcommand{\expecBig}[1]{\expecsym \Bigl[ #1 \Bigr]}
+\newcommand{\expecbigg}[1]{\expecsym \biggl[ #1 \biggr]}
+\newcommand{\expecBigg}[1]{\expecsym \Biggl[ #1 \Biggr]}
 
 
 % Cov [ ]
 \newcommand{\cov}{\@ifstar{\@covauto}{\@covnoauto}}
 \newcommand{\@covauto}[1]{\covsym \left[ #1 \right]}
-\newcommand{\@covnoauto}[1]{\covsym \, [#1]}
-\newcommand{\covbig}[1]{\covsym \big[ #1 \big]}
-\newcommand{\covBig}[1]{\covsym \Big[ #1 \Big]}
-\newcommand{\covbigg}[1]{\covsym \bigg[ #1 \bigg]}
-\newcommand{\covBigg}[1]{\covsym \Bigg[ #1 \Bigg]}
+\newcommand{\@covnoauto}[1]{\covsym [#1]}
+\newcommand{\covbig}[1]{\covsym \bigl[ #1 \bigr]}
+\newcommand{\covBig}[1]{\covsym \Bigl[ #1 \Bigr]}
+\newcommand{\covbigg}[1]{\covsym \biggl[ #1 \biggr]}
+\newcommand{\covBigg}[1]{\covsym \Biggl[ #1 \Biggr]}
 
 % Var [ ]
 \newcommand{\varr}{\@ifstar{\@varrauto}{\@varrnoauto}}
 \newcommand{\@varrauto}[1]{\varrsym \left[ #1 \right]}
-\newcommand{\@varrnoauto}[1]{\varrsym \, [#1]}
-\newcommand{\varrbig}[1]{\varrsym \big[ #1 \big]}
-\newcommand{\varrBig}[1]{\varrsym \Big[ #1 \Big]}
-\newcommand{\varrbigg}[1]{\varrsym \bigg[ #1 \bigg]}
-\newcommand{\varrBigg}[1]{\varrsym \Bigg[ #1 \Bigg]}
+\newcommand{\@varrnoauto}[1]{\varrsym [#1]}
+\newcommand{\varrbig}[1]{\varrsym \bigl[ #1 \bigr]}
+\newcommand{\varrBig}[1]{\varrsym \Bigl[ #1 \Bigr]}
+\newcommand{\varrbigg}[1]{\varrsym \biggl[ #1 \biggr]}
+\newcommand{\varrBigg}[1]{\varrsym \Biggl[ #1 \Biggr]}
 
 % Diag ( )
 \newcommand{\diag}{\@ifstar{\@diagauto}{\@diagnoauto}}
 \newcommand{\@diagauto}[1]{\diagsym \left( #1 \right)}
-\newcommand{\@diagnoauto}[1]{\diagsym \, (#1)}
-\newcommand{\diagbig}[1]{\diagsym \big( #1 \big)}
-\newcommand{\diagBig}[1]{\diagsym \Big( #1 \Big)}
-\newcommand{\diagbigg}[1]{\diagsym \bigg( #1 \bigg)}
-\newcommand{\diagBigg}[1]{\diagsym \Bigg( #1 \Bigg)}
+\newcommand{\@diagnoauto}[1]{\diagsym (#1)}
+\newcommand{\diagbig}[1]{\diagsym \bigl( #1 \bigr)}
+\newcommand{\diagBig}[1]{\diagsym \Bigl( #1 \Bigr)}
+\newcommand{\diagbigg}[1]{\diagsym \biggl( #1 \biggr)}
+\newcommand{\diagBigg}[1]{\diagsym \Biggl( #1 \Biggr)}
 
 % tr ( )
 \newcommand{\trace}{\@ifstar{\@traceauto}{\@tracenoauto}}
 \newcommand{\@traceauto}[1]{\tracesym \left( #1 \right)}
-\newcommand{\@tracenoauto}[1]{\tracesym \, (#1)}
-\newcommand{\tracebig}[1]{\tracesym \big( #1 \big)}
-\newcommand{\traceBig}[1]{\tracesym \Big( #1 \Big)}
-\newcommand{\tracebigg}[1]{\tracesym \bigg( #1 \bigg)}
-\newcommand{\traceBigg}[1]{\tracesym \Bigg( #1 \Bigg)}
+\newcommand{\@tracenoauto}[1]{\tracesym (#1)}
+\newcommand{\tracebig}[1]{\tracesym \bigl( #1 \bigr)}
+\newcommand{\traceBig}[1]{\tracesym \Bigl( #1 \Bigr)}
+\newcommand{\tracebigg}[1]{\tracesym \biggl( #1 \biggr)}
+\newcommand{\traceBigg}[1]{\tracesym \Biggl( #1 \Biggr)}
 \makeatother
 
 \newcommand{\A}{\mathcal{A}}           % Generator
@@ -178,9 +180,9 @@
 %\makeatother
 
 % Some functions
-\newcommand{\mBesselsec}{\operatorname{K}_\nu}
-\newcommand{\jacob}{\operatorname{J}}
-\newcommand{\hessian}{\operatorname{H}}
+\newcommand{\mBesselsec}{\operatorname{K_\nu}}
+\newcommand{\jacob}{\mathrm{J}}
+\newcommand{\hessian}{\mathrm{H}}
 
 % Literals
 \def\matern{Mat\'{e}rn }
