@@ -1,8 +1,9 @@
-%!TEX root = dissertation.tex
+%!TEX root = main.tex
 % Generic macro definitions for a number of math operations.
+% Version 2.0, last updated 02.06.2022.
 %
 % To use this macro you need packages: amsmath, amssymb, bm, mathtools
-%
+% 
 % Zheng Zhao @ 2019
 % zz@zabemon.com
 %
@@ -45,6 +46,7 @@
 \DeclareMathOperator*{\sup}{sup\,}  % sup better spacing
 \DeclareMathOperator*{\inf}{inf\,}  % inf
 \DeclareMathOperator*{\lim}{lim\,}  % inf
+\DeclareMathOperator*{\oprepeat}{\cdots}  % repeat operation
 
 \newcommand{\sgn}{\operatorname{sgn}}           % sign function
 
@@ -178,9 +180,9 @@
 %\makeatother
 
 % Some functions
-\newcommand{\mBesselsec}{\operatorname{K}_\nu}
-\newcommand{\jacob}{\operatorname{J}}
-\newcommand{\hessian}{\operatorname{H}}
+\newcommand{\mBesselsec}{\operatorname{K_\nu}}
+\newcommand{\jacob}{\mathrm{J}}
+\newcommand{\hessian}{\mathrm{H}}
 
 % Literals
 \def\matern{Mat\'{e}rn }

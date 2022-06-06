@@ -1001,8 +1001,8 @@ We consider a maximum a posterior (MAP) approach for solving Equation~\eqref{equ
 %
 \begin{align}
 	\mathcal{L}^{\mathrm{B}} &\coloneqq \mathcal{L}^{\mathrm{B}}(v_{1:T}) \coloneqq \mathcal{L}^{\mathrm{B}}(u^1_{0, 1:T}, u^2_{1, 1:T}, u^3_{1, 1:T}) \nonumber\\
-	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\big(2 \, \pi \, C^1_{1:T}\big) \label{equ:r-dgp-batch-obj}\\
-	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\big(2 \, \pi \, C^2_{1:T}\big) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\big(2 \, \pi \, C^3_{1:T}\big)\nonumber,
+	&= \normbig{u^1_{0, 1:T} - y_{1:T}}^2_{\Xi_{1:T}} + \normbig{u^1_{0, 1:T}}^2_{C^1_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^1_{1:T}\bigr) \label{equ:r-dgp-batch-obj}\\
+	&\quad+ \normbig{u^2_{1, 1:T}}^2_{C^2_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^2_{1:T}\bigr) + \normbig{u^3_{1, 1:T}}^2_{C^3_{1:T}} + \log \,\det\bigl(2 \, \pi \, C^3_{1:T}\bigr)\nonumber,
 \end{align}
 %
 where we omit the factor $1 \, / \, 2$ and let $v_{1:T} \coloneqq \big\lbrace u^1_{0, 1:T}, u^2_{1, 1:T}, u^3_{1, 1:T} \big\rbrace$ for simplicity. In the above Equation~\eqref{equ:r-dgp-batch-obj}, notation $\norm{x}_G = (x \, G^{-1} \, x)^{1 \, / \, 2}$ stands for the $G$-weighted Euclidean norm given a non-singular matrix $G$. We write $C^1_{1:T} \in \R^{T \times T}$ for the matrix obtained by evaluating the covariance function $C^1$ on the Cartesian grid $(t_1, \ldots, t_T) \times (t_1, \ldots, t_T)$, and similarly for $C^2_{1:T}$ and $C^3_{1:T}$. The noise covariance $\Xi_{1:T}$ is the diagonal matrix of $\Xi_1,\ldots, \Xi_T$. We now introduce the regularisation term 

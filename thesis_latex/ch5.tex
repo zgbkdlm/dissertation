@@ -19,7 +19,7 @@ One way to proceed is to assume a parametric form of function $a=a_\vartheta(\cd
 In this chapter, we are mainly concerned with the GP regression approach for estimating the unknown $a$~\citep{Papaspiliopoulos2012, Ruttor2013, Garcia2017, Batz2018, Opper2019}. The key idea of this approach is to assume that the unknown drift function is distributed according to a GP, that is
 %
 \begin{equation}
-	a(x) \sim \mathrm{GP}(0, C(x, x')).
+	a(x) \sim \mathrm{GP}\bigl(0, C(x, x')\bigr).
 \end{equation}
 %
 Having at our disposal measurements $X(t_1), X(t_2), \ldots, X(t_T)$ observed directly from SDE~\eqref{equ:drift-est-sde}, we can formulate the problem of estimating $a$ as a GP regression problem. In order to do so, we discretise the SDE in Equation~\eqref{equ:drift-est-sde} and thereupon define the measurement model as 
@@ -32,7 +32,7 @@ for $k=1,2,\ldots, T$, where the function $\check{f}_{k-1}\colon \R \to \R$ and 
 %
 \begin{equation}
 	\begin{split}
-		a(x) &\sim \mathrm{GP}(0, C(x, x')),\\
+		a(x) &\sim \mathrm{GP}(0, C\bigl(x, x')\bigr),\\
 		Y_k &= \check{f}_{k-1}(X_{k-1}) + \check{q}_{k-1}(X_{k-1}).
 		\label{equ:drift-est-reg-model}
 	\end{split}
