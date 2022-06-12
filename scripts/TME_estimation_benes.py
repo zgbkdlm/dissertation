@@ -159,20 +159,18 @@ if __name__ == '__main__':
     x = sympy.MatrixSymbol('x', 1, 1)
     f = sympy.Matrix([sympy.tanh(x[0])])
     L = sympy.eye(1)
-    Q = sympy.eye(1)
     dt_sym = sympy.Symbol('dt')
 
     # TME
-    tme_mean, tme_cov = tme.mean_and_cov(x, f, L, Q, dt_sym,
+    tme_mean, tme_cov = tme.mean_and_cov(x, f, L, dt_sym,
                                          order=3, simp=True)
-    tme_x3 = tme.expectation(sympy.Matrix([x[0] ** 3]), x, f, L, Q, dt_sym,
+    tme_x3 = tme.expectation(sympy.Matrix([x[0] ** 3]), x, f, L, dt_sym,
                              order=3, simp=True)
-    tme_nonlinear3 = tme.expectation(sympy.Matrix([sympy.sin(x[0])]), x, f, L, Q, dt_sym,
+    tme_nonlinear3 = tme.expectation(sympy.Matrix([sympy.sin(x[0])]), x, f, L, dt_sym,
                                      order=2, simp=True)
-    tme_nonlinear4 = tme.expectation(sympy.Matrix([sympy.sin(x[0])]), x, f, L, Q, dt_sym,
+    tme_nonlinear4 = tme.expectation(sympy.Matrix([sympy.sin(x[0])]), x, f, L, dt_sym,
                                      order=3, simp=True)
-    tme_nn = tme.expectation(sympy.Matrix([softplus_sympy(softplus_sympy(x[0]))]), x, f, L, Q, dt_sym,
-
+    tme_nn = tme.expectation(sympy.Matrix([softplus_sympy(softplus_sympy(x[0]))]), x, f, L, dt_sym,
                              order=3, simp=True)
 
     tme_mean_func = lambdify([x, dt_sym], tme_mean, 'numpy')

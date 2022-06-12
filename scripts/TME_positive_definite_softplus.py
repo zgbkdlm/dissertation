@@ -24,11 +24,10 @@ if __name__ == '__main__':
     f = sympy.Matrix([[sympy.log(1 + sympy.exp(x[0])) + kappa * x[1]],
                       [sympy.log(1 + sympy.exp(x[1])) + kappa * x[0]]])
     L = sympy.eye(2)
-    Q = sympy.eye(2)
     dt_sym = sympy.Symbol('dt')
 
     # TME
-    tme_mean, tme_cov = tme.mean_and_cov(x, f, L, Q, dt_sym,
+    tme_mean, tme_cov = tme.mean_and_cov(x, f, L, dt_sym,
                                          order=2, simp=True)
 
     # Cov

@@ -4,5 +4,4 @@ matplotlib
 scipy
 scikit-learn
 sympy
-tme
-
+tme>=0.1.4

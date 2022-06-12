@@ -89,13 +89,12 @@ def give_tme_symbols(order=3, simp=True):
     a_sym = -sp.Matrix([x[0] / g_sym(x[1]),
                         x[1] / sp.S(l2),
                         x[2] / sp.S(l3)])
-    Q_sym = sp.eye(3)
     b_sym = sp.sqrt(sp.S(2)) * sp.Matrix([[g_sym(x[2]) / sp.sqrt(g_sym(x[1])), 0, 0],
                                           [0, sp.S(s2) / sp.sqrt(sp.S(l2)), 0],
                                           [0, 0, sp.S(s3) / sp.sqrt(sp.S(l3))]
                                           ])
     dt_sym = sp.Symbol('dt')
-    tme_mean, tme_cov = tme.mean_and_cov(x, a_sym, b_sym, Q_sym, dt_sym,
+    tme_mean, tme_cov = tme.mean_and_cov(x, a_sym, b_sym, dt_sym,
                                          order=order, simp=simp)
     tme_mean_func = lambdify([x, dt_sym], tme_mean, 'numpy')
     tme_cov_func = lambdify([x, dt_sym], tme_cov, 'numpy')
